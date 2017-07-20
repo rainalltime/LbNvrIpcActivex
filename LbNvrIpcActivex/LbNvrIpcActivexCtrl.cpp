@@ -182,6 +182,6 @@ BOOL CLbNvrIpcActivexCtrl::PreTranslateMessage(MSG* pMsg)
 {
 	// TODO: 在此添加专用代码和/或调用基类
 	CString aaaaaaa="esc";
-	if (pMsg->message == WM_KEYDOWN) if(27==pMsg->wParam) MessageBox(aaaaaaa, ""); 
+	if (pMsg->message == WM_KEYDOWN) if(27==pMsg->wParam) MessageBox(aaaaaaa, "");  
 	return COleControl::PreTranslateMessage(pMsg);
 }
