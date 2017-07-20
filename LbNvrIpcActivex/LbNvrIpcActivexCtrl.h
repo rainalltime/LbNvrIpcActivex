@@ -38,10 +38,34 @@ protected:
 	DECLARE_DISPATCH_MAP()
 
 	afx_msg void AboutBox();
+
 	//****************************************************************
 	//外部调用的函数
-	afx_msg BSTR LbLogin(LPCTSTR ip, SHORT port, LPCTSTR userName, LPCTSTR password);
 
+	////登录函数//四个参数分别代表DVRip地址，DVR端口号，登录名，登录密码。
+	//返回值MaxChannelCount最大通道数，isSuccess是否成功-2（未知、未调用）-1（失败）0（成功）,error错误编号
+	afx_msg BSTR LbLogin(LPCTSTR ip, USHORT port, LPCTSTR userName, LPCTSTR password);
+	////播放函数，channelSelected实时监视通道号，如果rType为RType_Multiplay该参数保留。当rType为RType_Multiplay_1~RType_Multiplay_16时，nChannelID决定了预览的画面，
+	////如当RType_Multiplay_4时，nChannelID为4、5、6、7其中一个值表示预览第5到第7通道的四画面预览 
+	////DH_RealPlayType播放类型，数字代表意义如下。一般设为0
+	/*
+		0	// 实时预览
+		1	// 多画面预览
+		2	// 实时监视-主码流,等同于DH_RType_Realplay
+		3	// 实时监视-从码流1
+		4	// 实时监视-从码流2
+		5	// 实时监视-从码流3
+		6	// 多画面预览－1画面
+		7	// 多画面预览－4画面
+		8	// 多画面预览－8画面
+		9	// 多画面预览－9画面
+		10	// 多画面预览－16画面
+		11	// 多画面预览－6画面
+		12	// 多画面预览－12画面
+		13	// 多画面预览－25画面
+		14	// 多画面预览－36画面
+		*/
+	afx_msg BSTR LbPlay(SHORT channelSelected, SHORT playMode);
 // 事件映射
 	DECLARE_EVENT_MAP()
 
@@ -85,5 +109,11 @@ public:
 	friend  void CALLBACK HaveReConnect(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort,
 		LDWORD dwUser);
 
+	
+protected:
+	
+	
+
+	
 	
 };

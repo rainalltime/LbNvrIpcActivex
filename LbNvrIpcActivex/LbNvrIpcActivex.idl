@@ -23,7 +23,7 @@ library LbNvrIpcActivexLib
 		methods:
 
 			[id(DISPID_ABOUTBOX)] void AboutBox();
-			[id(1)] BSTR LbLogin(BSTR ip, SHORT port, BSTR userName, BSTR password);
+			[id(1)] BSTR LbLogin(BSTR ip, USHORT port, BSTR userName, BSTR password);
 	};
 
 	//  CLbNvrIpcActivexCtrl 的事件调度接口

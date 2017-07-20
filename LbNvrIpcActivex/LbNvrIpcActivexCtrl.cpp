@@ -25,7 +25,7 @@ END_MESSAGE_MAP()
 
 BEGIN_DISPATCH_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "AboutBox", DISPID_ABOUTBOX, AboutBox, VT_EMPTY, VTS_NONE)
-	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbLogin", dispidLbLogin, LbLogin, VT_BSTR, VTS_BSTR VTS_I2 VTS_BSTR VTS_BSTR)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbLogin", dispidLbLogin, LbLogin, VT_BSTR, VTS_BSTR VTS_UI2 VTS_BSTR VTS_BSTR)
 END_DISPATCH_MAP()
 
 // 事件映射
@@ -232,11 +232,12 @@ void CALLBACK HaveReConnect(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort,
 
 }
 
-BSTR CLbNvrIpcActivexCtrl::LbLogin(LPCTSTR ip, SHORT port, LPCTSTR userName, LPCTSTR password)
+BSTR CLbNvrIpcActivexCtrl::LbLogin(LPCTSTR ip, USHORT port, LPCTSTR userName, LPCTSTR password)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
-
+	MessageBox("", "login");
 	CString strResult;
+	strResult.Append("{");
 
 	// TODO: 在此添加调度处理程序代码
 	// 设置更多网络参数，NET_PARAM 的 nWaittime，nConnectTryNum 成员与	CLIENT_SetConnectTime 接口设置的登录设备超时时间和尝试次数意义相同
@@ -246,21 +247,56 @@ BSTR CLbNvrIpcActivexCtrl::LbLogin(LPCTSTR ip, SHORT port, LPCTSTR userName, LPC
 	CLIENT_SetNetworkParam(&stuNetParm);
 	NET_DEVICEINFO_Ex stDevInfoEx = { 0 };
 	int nError = 0;
-	while (0 == g_lLoginHandle)
-	{
+	if (FALSE == g_bNetSDKInitFlag) {
 		// 登录设备
-		g_lLoginHandle = CLIENT_LoginEx2(ip, port, userName,
-			password, EM_LOGIN_SPEC_CAP_TCP, NULL, &stDevInfoEx, &nError);
+		g_lLoginHandle = CLIENT_LoginEx2(ip, port, userName, password, EM_LOGIN_SPEC_CAP_TCP, NULL, &stDevInfoEx, &nError);
 		if (0 == g_lLoginHandle)
 		{
-			strResult.AppendFormat("{\"isSuccess\":\"%s\",\"error\":\"%d\"}","fail", nError);
+			strResult.AppendFormat("\"isSuccess\":\"%s\",", "fail");
+			strResult.AppendFormat("\"error\":\"%d\",", nError);
 		}
 		else
 		{
-			strResult.AppendFormat("{\"isSuccess\":\"%s\",\"error\":\"%d\"}", "success", nError);
+			strResult.AppendFormat("\"isSuccess\":\"%s\",\"error\":\"%d\",", "success", nError);
+			strResult.AppendFormat("\"error\":\"%d\",", nError);
+			strResult.AppendFormat("\"MaxChannelCount\":\"%d\",", stDevInfoEx.nChanNum>1? stDevInfoEx.nChanNum:1);
 		}
 		// 用户初次登录设备，需要初始化一些数据才能正常实现业务功能，建议登录后等待一小段时间，具体等待时间因设备而异
 	}
+	strResult.Append("\"\":\"\"}");
+	return strResult.AllocSysString();
+}
 
+
+
+
+BSTR CLbNvrIpcActivexCtrl::LbPlay(SHORT channelSelected, SHORT playMode)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;
+
+	// TODO: 在此添加调度处理程序代码
+	// 判断是否登录设备
+	if (0 != g_lLoginHandle)
+	{
+		// 实现实时监视功能业务
+		// 获取窗口句柄
+		HWND hWnd = GetSafeHwnd();
+		//开启实时监视
+
+		g_lRealHandle = CLIENT_RealPlayEx(g_lLoginHandle, channelSelected, hWnd,
+			(DH_RealPlayType)playMode);
+		if (0 == g_lRealHandle)
+		{
+			strResult.AppendFormat("\"error\": \"%x\"",
+				CLIENT_GetLastError());
+			strResult.AppendFormat("\"isSuccess\": \"%d\"", "fail");
+		}
+		else {
+			strResult.AppendFormat("\"isSuccess\": \"%d\"", "success");
+		}
+	}
+	return strResult.AllocSysString();
 	return strResult.AllocSysString();
 }
