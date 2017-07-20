@@ -50,6 +50,15 @@
     <ClInclude Include="LbNvrIpcActivexPropPage.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="avglobal.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dhconfigsdk.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dhnetsdk.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="LbNvrIpcActivex.def">

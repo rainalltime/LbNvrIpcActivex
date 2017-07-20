@@ -77,6 +77,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.ocx</TargetExt>
+    <LibraryPath>lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -103,6 +104,7 @@
       <ModuleDefinitionFile>.\LbNvrIpcActivex.def</ModuleDefinitionFile>
       <OutputFile>$(OutDir)$(ProjectName).ocx</OutputFile>
       <RegisterOutput>true</RegisterOutput>
+      <AdditionalDependencies>dhplay.lib;dhconfigsdk.lib;dhnetsdk.lib;</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -221,6 +223,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="avglobal.h" />
+    <ClInclude Include="dhconfigsdk.h" />
+    <ClInclude Include="dhnetsdk.h" />
     <ClInclude Include="LbNvrIpcActivex.h" />
     <ClInclude Include="LbNvrIpcActivexCtrl.h" />
     <ClInclude Include="LbNvrIpcActivexPropPage.h" />

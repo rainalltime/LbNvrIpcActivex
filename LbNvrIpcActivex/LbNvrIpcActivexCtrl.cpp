@@ -25,6 +25,7 @@ END_MESSAGE_MAP()
 
 BEGIN_DISPATCH_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "AboutBox", DISPID_ABOUTBOX, AboutBox, VT_EMPTY, VTS_NONE)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbLogin", dispidLbLogin, LbLogin, VT_BSTR, VTS_BSTR VTS_I2 VTS_BSTR VTS_BSTR)
 END_DISPATCH_MAP()
 
 // 事件映射
@@ -160,6 +161,8 @@ int CLbNvrIpcActivexCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// TODO:  在此添加您专用的创建代码
 
+
+	InitNetSDK();
 	return 0;
 }
 
@@ -181,7 +184,83 @@ void CLbNvrIpcActivexCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
 BOOL CLbNvrIpcActivexCtrl::PreTranslateMessage(MSG* pMsg)
 {
 	// TODO: 在此添加专用代码和/或调用基类
-	CString aaaaaaa="esc";
-	if (pMsg->message == WM_KEYDOWN) if(27==pMsg->wParam) MessageBox(aaaaaaa, "");  
+	static CString aaaaaaa;
+	if (pMsg->message == WM_KEYUP) {
+		aaaaaaa.AppendFormat("ss:%d\n", pMsg->wParam);
+		if ('1' == pMsg->wParam)
+			MessageBox(aaaaaaa, "aa");
+	}
 	return COleControl::PreTranslateMessage(pMsg);
+}
+
+bool CLbNvrIpcActivexCtrl::InitNetSDK()
+{
+	// 初始化 SDK
+	g_bNetSDKInitFlag = CLIENT_Init(DisConnectFunc, 0);
+	if (FALSE == g_bNetSDKInitFlag)
+	{
+		printf("Initialize client SDK fail; \n");
+		return false;
+	}
+	else
+	{
+		printf("Initialize client SDK done; \n");
+	}
+	//// 获取 SDK 版本信息
+	//// 此操作为可选操作
+	//DWORD dwNetSdkVersion = CLIENT_GetSDKVersion();
+	//printf("NetSDK version is [%d]\n", dwNetSdkVersion);
+	// 设置断线重连回调接口，设置过断线重连成功回调函数后，当设备出现断线情况，SDK	内部会自动进行重连操作
+	// 此操作为可选操作，但建议用户进行设置
+	CLIENT_SetAutoReconnect(&HaveReConnect, 0);
+	// 设置登录超时时间和尝试次数
+	// 此操作为可选操作
+	int nWaitTime = 5000; // 登录请求响应超时时间设置为 5s
+	int nTryTimes = 3; // 登录时尝试建立链接 3 次
+	CLIENT_SetConnectTime(nWaitTime, nTryTimes);
+	
+}
+//Callback function when device disconnected
+void CALLBACK DisConnectFunc(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort,
+	DWORD dwUser)
+{
+
+}
+void CALLBACK HaveReConnect(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort,
+	LDWORD dwUser)
+{
+
+}
+
+BSTR CLbNvrIpcActivexCtrl::LbLogin(LPCTSTR ip, SHORT port, LPCTSTR userName, LPCTSTR password)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;
+
+	// TODO: 在此添加调度处理程序代码
+	// 设置更多网络参数，NET_PARAM 的 nWaittime，nConnectTryNum 成员与	CLIENT_SetConnectTime 接口设置的登录设备超时时间和尝试次数意义相同
+	// 此操作为可选操作
+	NET_PARAM stuNetParm = { 0 };
+	stuNetParm.nConnectTime = 2000; // 登录时尝试建立链接的超时时间
+	CLIENT_SetNetworkParam(&stuNetParm);
+	NET_DEVICEINFO_Ex stDevInfoEx = { 0 };
+	int nError = 0;
+	while (0 == g_lLoginHandle)
+	{
+		// 登录设备
+		g_lLoginHandle = CLIENT_LoginEx2(ip, port, userName,
+			password, EM_LOGIN_SPEC_CAP_TCP, NULL, &stDevInfoEx, &nError);
+		if (0 == g_lLoginHandle)
+		{
+			strResult.AppendFormat("{\"isSuccess\":\"%s\",\"error\":\"%d\"}","fail", nError);
+		}
+		else
+		{
+			strResult.AppendFormat("{\"isSuccess\":\"%s\",\"error\":\"%d\"}", "success", nError);
+		}
+		// 用户初次登录设备，需要初始化一些数据才能正常实现业务功能，建议登录后等待一小段时间，具体等待时间因设备而异
+	}
+
+	return strResult.AllocSysString();
 }
