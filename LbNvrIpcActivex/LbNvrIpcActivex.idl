@@ -1,0 +1,51 @@
+// LbNvrIpcActivex.idl : ActiveX 控件项目的类型库源。
+
+// 此文件将由 MIDL 编译器工具处理以
+// 产生类型库(LbNvrIpcActivex.tlb)，该类型库将成为
+// LbNvrIpcActivex.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(9E9BEC79-E603-4BC2-B0DD-C54EA672DFBF), version(1.0),
+  control ]
+library LbNvrIpcActivexLib
+{
+	importlib(STDOLE_TLB);
+
+	//  CLbNvrIpcActivexCtrl 的主调度接口
+	[ 
+		uuid(A918B667-BDC0-4520-B635-AC17FB92C498)	
+	]
+	dispinterface _DLbNvrIpcActivex
+	{
+		properties:
+		methods:
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  CLbNvrIpcActivexCtrl 的事件调度接口
+
+	[ 
+		uuid(00C2F5AD-67FF-4B20-9E97-CFAC6A8947D3)	
+	]
+	dispinterface _DLbNvrIpcActivexEvents
+	{
+		properties:
+			//  事件接口没有任何属性
+
+		methods:
+	};
+
+	//  CLbNvrIpcActivexCtrl 的类信息
+	[
+		uuid(6F2D723E-6928-4E2C-92A2-F8135A496F65)
+	]
+	coclass LbNvrIpcActivex
+	{
+		[default] dispinterface _DLbNvrIpcActivex;
+		[default, source] dispinterface _DLbNvrIpcActivexEvents;
+	};
+
+};
