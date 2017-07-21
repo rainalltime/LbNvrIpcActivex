@@ -182,7 +182,7 @@ void CLbNvrIpcActivexCtrl::OnDestroy()
 void CLbNvrIpcActivexCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-
+	SetFullScreen(!isFullScreen);
 	COleControl::OnLButtonDblClk(nFlags, point);
 }
 
@@ -192,6 +192,7 @@ BOOL CLbNvrIpcActivexCtrl::PreTranslateMessage(MSG* pMsg)
 	// TODO: 在此添加专用代码和/或调用基类
 	static CString aaaaaaa;
 	if (pMsg->message == WM_KEYUP) {
+		SetFullScreen(isFullScreen);
 		aaaaaaa.AppendFormat("ss:%d\n", pMsg->wParam);
 		if ('1' == pMsg->wParam)
 			MessageBox(aaaaaaa, "aa");
@@ -241,7 +242,6 @@ void CALLBACK HaveReConnect(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort,
 BSTR CLbNvrIpcActivexCtrl::LbLogin(LPCTSTR ip, USHORT port, LPCTSTR userName, LPCTSTR password)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
-	MessageBox("", "login");
 	CString strResult;
 	strResult.Append("{");
 
@@ -253,7 +253,7 @@ BSTR CLbNvrIpcActivexCtrl::LbLogin(LPCTSTR ip, USHORT port, LPCTSTR userName, LP
 	CLIENT_SetNetworkParam(&stuNetParm);
 	NET_DEVICEINFO_Ex stDevInfoEx = { 0 };
 	int nError = 0;
-	if (FALSE == g_bNetSDKInitFlag) {
+	if (FALSE != g_bNetSDKInitFlag) {
 		// 登录设备
 		g_lLoginHandle = CLIENT_LoginEx2(ip, port, userName, password, EM_LOGIN_SPEC_CAP_TCP, NULL, &stDevInfoEx, &nError);
 		if (0 == g_lLoginHandle)
@@ -264,7 +264,6 @@ BSTR CLbNvrIpcActivexCtrl::LbLogin(LPCTSTR ip, USHORT port, LPCTSTR userName, LP
 		else
 		{
 			strResult.AppendFormat("\"isSuccess\":\"%s\",\"error\":\"%d\",", "success", nError);
-			strResult.AppendFormat("\"error\":\"%d\",", nError);
 			strResult.AppendFormat("\"MaxChannelCount\":\"%d\",", stDevInfoEx.nChanNum>1? stDevInfoEx.nChanNum:1);
 		}
 		// 用户初次登录设备，需要初始化一些数据才能正常实现业务功能，建议登录后等待一小段时间，具体等待时间因设备而异
@@ -426,4 +425,36 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayTime(ULONG startSecond)
 	return strResult.AllocSysString();
 
 	
+}
+
+
+void CLbNvrIpcActivexCtrl::SetFullScreen(bool isFull)
+{	
+	if (isFullScreen)
+	{
+		//Full screen 
+		//Get displayer resolution 
+		int cx = GetSystemMetrics(SM_CXSCREEN);
+		int cy = GetSystemMetrics(SM_CYSCREEN);
+		//Save position information 
+		GetWindowPlacement(&_temppl);
+		//Modify style 
+		ModifyStyle(WS_CHILD, WS_POPUP);
+		//Modify main-window 
+		_tempparent = SetParent(NULL);
+		_tempparent->ShowWindow(SW_HIDE);
+		//Move window 
+		MoveWindow(0, 0, cx, cy);
+		//	SetWindowPos(&wndTopMost,0,0,cx,cy,NULL);
+	}
+	else
+	{//Restore
+	 //Restore main window 
+		_tempparent->ShowWindow(SW_SHOW);
+		SetParent(_tempparent);
+		//Restore style 
+		ModifyStyle(WS_POPUP, WS_CHILD);
+		//Restore position 
+		SetWindowPlacement(&_temppl);
+	}
 }
