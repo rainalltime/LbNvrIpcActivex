@@ -26,6 +26,9 @@ END_MESSAGE_MAP()
 BEGIN_DISPATCH_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "AboutBox", DISPID_ABOUTBOX, AboutBox, VT_EMPTY, VTS_NONE)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbLogin", dispidLbLogin, LbLogin, VT_BSTR, VTS_BSTR VTS_UI2 VTS_BSTR VTS_BSTR)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbPlay", dispidLbPlay, LbPlay, VT_BSTR, VTS_I2 VTS_I2)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbPtzCommand", dispidLbPtzCommand, LbPtzCommand, VT_BSTR, VTS_I4 VTS_UI2 VTS_UI2 VTS_UI2 VTS_UI2)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbSetChannel", dispidLbSetChannel, LbSetChannel, VT_BSTR, VTS_UI2)
 END_DISPATCH_MAP()
 
 // 事件映射
@@ -266,10 +269,6 @@ BSTR CLbNvrIpcActivexCtrl::LbLogin(LPCTSTR ip, USHORT port, LPCTSTR userName, LP
 	strResult.Append("\"\":\"\"}");
 	return strResult.AllocSysString();
 }
-
-
-
-
 BSTR CLbNvrIpcActivexCtrl::LbPlay(SHORT channelSelected, SHORT playMode)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
@@ -284,19 +283,45 @@ BSTR CLbNvrIpcActivexCtrl::LbPlay(SHORT channelSelected, SHORT playMode)
 		// 获取窗口句柄
 		HWND hWnd = GetSafeHwnd();
 		//开启实时监视
-
-		g_lRealHandle = CLIENT_RealPlayEx(g_lLoginHandle, channelSelected, hWnd,
+		channel = channelSelected;
+		g_lRealHandle = CLIENT_RealPlayEx(g_lLoginHandle, channel, hWnd,
 			(DH_RealPlayType)playMode);
 		if (0 == g_lRealHandle)
 		{
 			strResult.AppendFormat("\"error\": \"%x\"",
 				CLIENT_GetLastError());
-			strResult.AppendFormat("\"isSuccess\": \"%d\"", "fail");
+			strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
 		}
 		else {
-			strResult.AppendFormat("\"isSuccess\": \"%d\"", "success");
+			strResult.AppendFormat("\"isSuccess\": \"%s\"", "success");
 		}
 	}
 	return strResult.AllocSysString();
+}
+BSTR CLbNvrIpcActivexCtrl::LbPtzCommand(LONG command, USHORT param1, USHORT param2, USHORT param3, USHORT isStop)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;
+	// TODO: 在此添加调度处理程序代码
+	if (channel >= 0) {//如果通道有效
+		strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_DHPTZControlEx2(g_lLoginHandle, channel, command, param1, param2, param3, isStop)? "success": "fail");
+	}
+	else {
+		strResult.AppendFormat("\"isSuccess\": \"%s\"","fail");
+		strResult.AppendFormat("\"error\": \"%s\"", "通道号小于0");
+	}
+	return strResult.AllocSysString();
+}
+
+BSTR CLbNvrIpcActivexCtrl::LbSetChannel(USHORT channel)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;
+
+	// TODO: 在此添加调度处理程序代码
+	this->channel = channel;
+	strResult.AppendFormat("\"isSuccess\": \"%s\"", this->channel == channel? "success" : "fail");
 	return strResult.AllocSysString();
 }

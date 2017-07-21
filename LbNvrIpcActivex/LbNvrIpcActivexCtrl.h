@@ -66,12 +66,19 @@ protected:
 		14	// 多画面预览－36画面
 		*/
 	afx_msg BSTR LbPlay(SHORT channelSelected, SHORT playMode);
+	//云台控制
+	afx_msg BSTR LbPtzCommand(LONG command, USHORT param1, USHORT param2, USHORT param3, USHORT isStop);
+    //设置通道号
+	afx_msg BSTR LbSetChannel(USHORT channel);
 // 事件映射
 	DECLARE_EVENT_MAP()
 
 // 调度和事件 ID
 public:
 	enum {
+		dispidLbSetChannel = 4L,
+		dispidLbPtzCommand = 3L,
+		dispidLbPlay = 2L,
 		dispidLbLogin = 1L
 	};
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -90,6 +97,7 @@ public:
 	BOOL g_bNetSDKInitFlag = FALSE;
 	LLONG g_lLoginHandle = 0L;
 	LLONG g_lRealHandle = 0;
+	WORD channel;
 	//****************************
 	//类函数
 	//初始化sdk
@@ -115,5 +123,7 @@ protected:
 	
 
 	
+	
+
 	
 };
