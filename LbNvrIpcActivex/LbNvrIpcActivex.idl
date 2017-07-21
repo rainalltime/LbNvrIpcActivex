@@ -21,12 +21,12 @@ library LbNvrIpcActivexLib
 	{
 		properties:
 		methods:
-
 			[id(DISPID_ABOUTBOX)] void AboutBox();
 			[id(1)] BSTR LbLogin(BSTR ip, USHORT port, BSTR userName, BSTR password);
 			[id(2)] BSTR LbPlay(SHORT channelSelected, SHORT playMode);
 			[id(3)] BSTR LbPtzCommand(LONG command, USHORT param1, USHORT param2, USHORT param3, USHORT isStop);
 			[id(4)] BSTR LbSetChannel(USHORT channel);
+			[id(5)] BSTR LbPlayBack(SHORT channel, BSTR startTime, BSTR stopTime);
 	};
 
 	//  CLbNvrIpcActivexCtrl 的事件调度接口

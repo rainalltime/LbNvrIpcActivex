@@ -70,12 +70,15 @@ protected:
 	afx_msg BSTR LbPtzCommand(LONG command, USHORT param1, USHORT param2, USHORT param3, USHORT isStop);
     //设置通道号
 	afx_msg BSTR LbSetChannel(USHORT channel);
+	//回放
+	afx_msg BSTR LbPlayBack(SHORT channel, LPCTSTR startTime, LPCTSTR stopTime);
 // 事件映射
 	DECLARE_EVENT_MAP()
 
 // 调度和事件 ID
 public:
 	enum {
+		dispidLbPlayBack = 5L,
 		dispidLbSetChannel = 4L,
 		dispidLbPtzCommand = 3L,
 		dispidLbPlay = 2L,
@@ -97,6 +100,7 @@ public:
 	BOOL g_bNetSDKInitFlag = FALSE;
 	LLONG g_lLoginHandle = 0L;
 	LLONG g_lRealHandle = 0;
+	LLONG g_lPlayBackHandle = 0;
 	WORD channel;
 	//****************************
 	//类函数
@@ -116,14 +120,5 @@ public:
 	// 通过 CLIENT_SetAutoReconnect 设置该回调函数，当已断线的设备重连成功时，SDK 会调用该函数
 	friend  void CALLBACK HaveReConnect(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort,
 		LDWORD dwUser);
-
-	
 protected:
-	
-	
-
-	
-	
-
-	
 };

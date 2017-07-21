@@ -29,6 +29,7 @@ BEGIN_DISPATCH_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbPlay", dispidLbPlay, LbPlay, VT_BSTR, VTS_I2 VTS_I2)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbPtzCommand", dispidLbPtzCommand, LbPtzCommand, VT_BSTR, VTS_I4 VTS_UI2 VTS_UI2 VTS_UI2 VTS_UI2)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbSetChannel", dispidLbSetChannel, LbSetChannel, VT_BSTR, VTS_UI2)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbPlayBack", dispidLbPlayBack, LbPlayBack, VT_BSTR, VTS_I2 VTS_BSTR VTS_BSTR)
 END_DISPATCH_MAP()
 
 // 事件映射
@@ -323,5 +324,55 @@ BSTR CLbNvrIpcActivexCtrl::LbSetChannel(USHORT channel)
 	// TODO: 在此添加调度处理程序代码
 	this->channel = channel;
 	strResult.AppendFormat("\"isSuccess\": \"%s\"", this->channel == channel? "success" : "fail");
+	return strResult.AllocSysString();
+}
+
+
+BSTR CLbNvrIpcActivexCtrl::LbPlayBack(SHORT channel, LPCTSTR startTime, LPCTSTR stopTime)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;
+
+
+
+	// TODO: 在此添加调度处理程序代码
+
+	if (0 != g_lLoginHandle)
+	{
+
+		// 录像回放功能
+		// 获取控制台窗口句柄
+		HWND hWnd = GetSafeHwnd();
+		// 设置回放时的码流类型
+		int nStreamType = 0; // 0-主辅码流,1-主码流,2-辅码流
+		CLIENT_SetDeviceMode(g_lLoginHandle, DH_RECORD_STREAM_TYPE,
+			&nStreamType);
+		// 设置回放时的录像文件类型
+		NET_RECORD_TYPE emFileType = NET_RECORD_TYPE_ALL; // 所有录像
+		CLIENT_SetDeviceMode(g_lLoginHandle, DH_RECORD_TYPE, &emFileType);
+		//开启录像回放
+		int nChannelID = channel; // 通道号
+		NET_TIME stuStartTime = { 0 };
+		NET_TIME stuStopTime = { 0 };
+		if (sscanf(startTime, "%d-%d-%d   %d:%d:%d", &stuStartTime.dwYear, &stuStartTime.dwMonth, &stuStartTime.dwDay, &stuStartTime.dwHour, &stuStartTime.dwMinute, &stuStartTime.dwMinute) > 0
+			&& sscanf(stopTime, "%d-%d-%d   %d:%d:%d", &stuStopTime.dwYear, &stuStopTime.dwMonth, &stuStopTime.dwDay, &stuStopTime.dwHour, &stuStopTime.dwMinute, &stuStopTime.dwMinute) > 0)
+		{
+			g_lPlayBackHandle = CLIENT_PlayBackByTimeEx(g_lLoginHandle, nChannelID, &stuStartTime, &stuStopTime, hWnd, NULL, NULL, NULL, NULL);
+			if (0 == g_lPlayBackHandle)
+			{
+				strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
+				strResult.AppendFormat("\"error\": \"%s\"", "播放失败");
+			}
+			else {
+				strResult.AppendFormat("\"isSuccess\": \"%s\"", "success");
+			}
+		}
+		else
+		{
+			strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
+			strResult.AppendFormat("\"error\": \"%s\"", "时间格式错误");
+		}
+	}
 	return strResult.AllocSysString();
 }
