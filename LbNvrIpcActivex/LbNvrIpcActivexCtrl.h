@@ -165,6 +165,9 @@ protected:
 	afx_msg BSTR LbPlayBackContrl(SHORT command);
 	//跳转到指定的时间播放单位秒
 	afx_msg BSTR LbPlayTime(ULONG startSecond);
+	//
+	afx_msg BSTR LbStopPlay();
+	afx_msg BSTR LbStopBackPlay();
 
 // 事件映射
 	DECLARE_EVENT_MAP()
@@ -172,6 +175,8 @@ protected:
 // 调度和事件 ID
 public:
 	enum {
+		dispidLbStopBackPlay = 9L,
+		dispidLbStopPlay = 8L,
 		dispidLbPlayTime = 7L,
 		dispidLbPlayBackContrl = 6L,
 		dispidLbPlayBack = 5L,
@@ -208,6 +213,9 @@ public:
 	//类函数
 	//初始化sdk
 	bool InitNetSDK();
+	//
+	void endSdk();
+	//
 	void SetFullScreen(bool isFull);
 
 	//友元回调函数
@@ -228,4 +236,8 @@ protected:
 
 public:
 
+protected:
+
+public:
+	
 };

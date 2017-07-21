@@ -32,6 +32,8 @@ BEGIN_DISPATCH_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbPlayBack", dispidLbPlayBack, LbPlayBack, VT_BSTR, VTS_I2 VTS_BSTR VTS_BSTR)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbPlayBackContrl", dispidLbPlayBackContrl, LbPlayBackContrl, VT_BSTR, VTS_I2)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbPlayTime", dispidLbPlayTime, LbPlayTime, VT_BSTR, VTS_UI4)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbStopPlay", dispidLbStopPlay, LbStopPlay, VT_BSTR, VTS_NONE)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbStopBackPlay", dispidLbStopBackPlay, LbStopBackPlay, VT_BSTR, VTS_NONE)
 END_DISPATCH_MAP()
 
 // 事件映射
@@ -176,7 +178,7 @@ int CLbNvrIpcActivexCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CLbNvrIpcActivexCtrl::OnDestroy()
 {
 	COleControl::OnDestroy();
-
+	endSdk();
 	// TODO: 在此处添加消息处理程序代码
 }
 void CLbNvrIpcActivexCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
@@ -457,4 +459,36 @@ void CLbNvrIpcActivexCtrl::SetFullScreen(bool isFull)
 		//Restore position 
 		SetWindowPlacement(&_temppl);
 	}
+}
+
+
+BSTR CLbNvrIpcActivexCtrl::LbStopPlay()
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;
+
+	// TODO: 在此添加调度处理程序代码
+	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_StopRealPlayEx(g_lRealHandle) ? "success" : "fail");
+	return strResult.AllocSysString();
+}
+
+
+BSTR CLbNvrIpcActivexCtrl::LbStopBackPlay()
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;
+
+	// TODO: 在此添加调度处理程序代码
+	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_StopPlayBack(g_lPlayBackHandle) ? "success" : "fail");
+	return strResult.AllocSysString();
+}
+
+
+void CLbNvrIpcActivexCtrl::endSdk()
+{
+	CLIENT_Logout(g_lLoginHandle);
+	CLIENT_Cleanup();
+	g_bNetSDKInitFlag = FALSE;
 }
