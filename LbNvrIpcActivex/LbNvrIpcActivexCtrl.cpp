@@ -1,4 +1,4 @@
-// LbNvrIpcActivexCtrl.cpp : CLbNvrIpcActivexCtrl ActiveX ¿Ø¼şÀàµÄÊµÏÖ¡£
+ï»¿// LbNvrIpcActivexCtrl.cpp : CLbNvrIpcActivexCtrl ActiveX æ§ä»¶ç±»çš„å®ç°ã€‚
 
 #include "stdafx.h"
 #include "LbNvrIpcActivex.h"
@@ -12,7 +12,7 @@
 
 IMPLEMENT_DYNCREATE(CLbNvrIpcActivexCtrl, COleControl)
 
-// ÏûÏ¢Ó³Éä
+// æ¶ˆæ¯æ˜ å°„
 
 BEGIN_MESSAGE_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	ON_OLEVERB(AFX_IDS_VERB_PROPERTIES, OnProperties)
@@ -21,7 +21,7 @@ BEGIN_MESSAGE_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	ON_WM_LBUTTONDBLCLK()
 END_MESSAGE_MAP()
 
-// µ÷¶ÈÓ³Éä
+// è°ƒåº¦æ˜ å°„
 
 BEGIN_DISPATCH_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "AboutBox", DISPID_ABOUTBOX, AboutBox, VT_EMPTY, VTS_NONE)
@@ -36,33 +36,33 @@ BEGIN_DISPATCH_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbStopBackPlay", dispidLbStopBackPlay, LbStopBackPlay, VT_BSTR, VTS_NONE)
 END_DISPATCH_MAP()
 
-// ÊÂ¼şÓ³Éä
+// äº‹ä»¶æ˜ å°„
 
 BEGIN_EVENT_MAP(CLbNvrIpcActivexCtrl, COleControl)
 END_EVENT_MAP()
 
-// ÊôĞÔÒ³
+// å±æ€§é¡µ
 
-// TODO: ¸ù¾İĞèÒªÌí¼Ó¸ü¶àÊôĞÔÒ³¡£Çë¼Ç×¡Ôö¼Ó¼ÆÊı!
+// TODO: æ ¹æ®éœ€è¦æ·»åŠ æ›´å¤šå±æ€§é¡µã€‚è¯·è®°ä½å¢åŠ è®¡æ•°!
 BEGIN_PROPPAGEIDS(CLbNvrIpcActivexCtrl, 1)
 	PROPPAGEID(CLbNvrIpcActivexPropPage::guid)
 END_PROPPAGEIDS(CLbNvrIpcActivexCtrl)
 
-// ³õÊ¼»¯Àà¹¤³§ºÍ guid
+// åˆå§‹åŒ–ç±»å·¥å‚å’Œ guid
 
 IMPLEMENT_OLECREATE_EX(CLbNvrIpcActivexCtrl, "LBNVRIPCACTIVEX.LbNvrIpcActivexCtrl.1",
 	0x6f2d723e, 0x6928, 0x4e2c, 0x92, 0xa2, 0xf8, 0x13, 0x5a, 0x49, 0x6f, 0x65)
 
-// ¼üÈë¿â ID ºÍ°æ±¾
+// é”®å…¥åº“ ID å’Œç‰ˆæœ¬
 
 IMPLEMENT_OLETYPELIB(CLbNvrIpcActivexCtrl, _tlid, _wVerMajor, _wVerMinor)
 
-// ½Ó¿Ú ID
+// æ¥å£ ID
 
 const IID IID_DLbNvrIpcActivex = { 0xA918B667, 0xBDC0, 0x4520, { 0xB6, 0x35, 0xAC, 0x17, 0xFB, 0x92, 0xC4, 0x98 } };
 const IID IID_DLbNvrIpcActivexEvents = { 0xC2F5AD, 0x67FF, 0x4B20, { 0x9E, 0x97, 0xCF, 0xAC, 0x6A, 0x89, 0x47, 0xD3 } };
 
-// ¿Ø¼şÀàĞÍĞÅÏ¢
+// æ§ä»¶ç±»å‹ä¿¡æ¯
 
 static const DWORD _dwLbNvrIpcActivexOleMisc =
 	OLEMISC_ACTIVATEWHENVISIBLE |
@@ -74,15 +74,15 @@ static const DWORD _dwLbNvrIpcActivexOleMisc =
 IMPLEMENT_OLECTLTYPE(CLbNvrIpcActivexCtrl, IDS_LBNVRIPCACTIVEX, _dwLbNvrIpcActivexOleMisc)
 
 // CLbNvrIpcActivexCtrl::CLbNvrIpcActivexCtrlFactory::UpdateRegistry -
-// Ìí¼Ó»òÒÆ³ı CLbNvrIpcActivexCtrl µÄÏµÍ³×¢²á±íÏî
+// æ·»åŠ æˆ–ç§»é™¤ CLbNvrIpcActivexCtrl çš„ç³»ç»Ÿæ³¨å†Œè¡¨é¡¹
 
 BOOL CLbNvrIpcActivexCtrl::CLbNvrIpcActivexCtrlFactory::UpdateRegistry(BOOL bRegister)
 {
-	// TODO:  ÑéÖ¤ÄúµÄ¿Ø¼şÊÇ·ñ·ûºÏµ¥ÔªÄ£ĞÍÏß³Ì´¦Àí¹æÔò¡£
-	// ÓĞ¹Ø¸ü¶àĞÅÏ¢£¬Çë²Î¿¼ MFC ¼¼ÊõËµÃ÷ 64¡£
-	// Èç¹ûÄúµÄ¿Ø¼ş²»·ûºÏµ¥ÔªÄ£ĞÍ¹æÔò£¬Ôò
-	// ±ØĞëĞŞ¸ÄÈçÏÂ´úÂë£¬½«µÚÁù¸ö²ÎÊı´Ó
-	// afxRegApartmentThreading ¸ÄÎª 0¡£
+	// TODO:  éªŒè¯æ‚¨çš„æ§ä»¶æ˜¯å¦ç¬¦åˆå•å…ƒæ¨¡å‹çº¿ç¨‹å¤„ç†è§„åˆ™ã€‚
+	// æœ‰å…³æ›´å¤šä¿¡æ¯ï¼Œè¯·å‚è€ƒ MFC æŠ€æœ¯è¯´æ˜ 64ã€‚
+	// å¦‚æœæ‚¨çš„æ§ä»¶ä¸ç¬¦åˆå•å…ƒæ¨¡å‹è§„åˆ™ï¼Œåˆ™
+	// å¿…é¡»ä¿®æ”¹å¦‚ä¸‹ä»£ç ï¼Œå°†ç¬¬å…­ä¸ªå‚æ•°ä»
+	// afxRegApartmentThreading æ”¹ä¸º 0ã€‚
 
 	if (bRegister)
 		return AfxOleRegisterControlClass(
@@ -101,22 +101,22 @@ BOOL CLbNvrIpcActivexCtrl::CLbNvrIpcActivexCtrlFactory::UpdateRegistry(BOOL bReg
 }
 
 
-// CLbNvrIpcActivexCtrl::CLbNvrIpcActivexCtrl - ¹¹Ôìº¯Êı
+// CLbNvrIpcActivexCtrl::CLbNvrIpcActivexCtrl - æ„é€ å‡½æ•°
 
 CLbNvrIpcActivexCtrl::CLbNvrIpcActivexCtrl()
 {
 	InitializeIIDs(&IID_DLbNvrIpcActivex, &IID_DLbNvrIpcActivexEvents);
-	// TODO:  ÔÚ´Ë³õÊ¼»¯¿Ø¼şµÄÊµÀıÊı¾İ¡£
+	// TODO:  åœ¨æ­¤åˆå§‹åŒ–æ§ä»¶çš„å®ä¾‹æ•°æ®ã€‚
 }
 
-// CLbNvrIpcActivexCtrl::~CLbNvrIpcActivexCtrl - Îö¹¹º¯Êı
+// CLbNvrIpcActivexCtrl::~CLbNvrIpcActivexCtrl - ææ„å‡½æ•°
 
 CLbNvrIpcActivexCtrl::~CLbNvrIpcActivexCtrl()
 {
-	// TODO:  ÔÚ´ËÇåÀí¿Ø¼şµÄÊµÀıÊı¾İ¡£
+	// TODO:  åœ¨æ­¤æ¸…ç†æ§ä»¶çš„å®ä¾‹æ•°æ®ã€‚
 }
 
-// CLbNvrIpcActivexCtrl::OnDraw - »æÍ¼º¯Êı
+// CLbNvrIpcActivexCtrl::OnDraw - ç»˜å›¾å‡½æ•°
 
 //void CLbNvrIpcActivexCtrl::OnDraw(
 //			CDC* pdc, const CRect& rcBounds, const CRect& /* rcInvalid */)
@@ -124,33 +124,33 @@ CLbNvrIpcActivexCtrl::~CLbNvrIpcActivexCtrl()
 //	if (!pdc)
 //		return;
 //
-//	// TODO:  ÓÃÄú×Ô¼ºµÄ»æÍ¼´úÂëÌæ»»ÏÂÃæµÄ´úÂë¡£
+//	// TODO:  ç”¨æ‚¨è‡ªå·±çš„ç»˜å›¾ä»£ç æ›¿æ¢ä¸‹é¢çš„ä»£ç ã€‚
 //	pdc->FillRect(rcBounds, CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
 //	pdc->Ellipse(rcBounds);
 //}
 
-// CLbNvrIpcActivexCtrl::DoPropExchange - ³Ö¾ÃĞÔÖ§³Ö
+// CLbNvrIpcActivexCtrl::DoPropExchange - æŒä¹…æ€§æ”¯æŒ
 
 void CLbNvrIpcActivexCtrl::DoPropExchange(CPropExchange* pPX)
 {
 	ExchangeVersion(pPX, MAKELONG(_wVerMinor, _wVerMajor));
 	COleControl::DoPropExchange(pPX);
 
-	// TODO: ÎªÃ¿¸ö³Ö¾ÃµÄ×Ô¶¨ÒåÊôĞÔµ÷ÓÃ PX_ º¯Êı¡£
+	// TODO: ä¸ºæ¯ä¸ªæŒä¹…çš„è‡ªå®šä¹‰å±æ€§è°ƒç”¨ PX_ å‡½æ•°ã€‚
 }
 
 
-// CLbNvrIpcActivexCtrl::OnResetState - ½«¿Ø¼şÖØÖÃÎªÄ¬ÈÏ×´Ì¬
+// CLbNvrIpcActivexCtrl::OnResetState - å°†æ§ä»¶é‡ç½®ä¸ºé»˜è®¤çŠ¶æ€
 
 void CLbNvrIpcActivexCtrl::OnResetState()
 {
-	COleControl::OnResetState();  // ÖØÖÃ DoPropExchange ÖĞÕÒµ½µÄÄ¬ÈÏÖµ
+	COleControl::OnResetState();  // é‡ç½® DoPropExchange ä¸­æ‰¾åˆ°çš„é»˜è®¤å€¼
 
-	// TODO:  ÔÚ´ËÖØÖÃÈÎÒâÆäËû¿Ø¼ş×´Ì¬¡£
+	// TODO:  åœ¨æ­¤é‡ç½®ä»»æ„å…¶ä»–æ§ä»¶çŠ¶æ€ã€‚
 }
 
 
-// CLbNvrIpcActivexCtrl::AboutBox - ÏòÓÃ»§ÏÔÊ¾¡°¹ØÓÚ¡±¿ò
+// CLbNvrIpcActivexCtrl::AboutBox - å‘ç”¨æˆ·æ˜¾ç¤ºâ€œå…³äºâ€æ¡†
 
 void CLbNvrIpcActivexCtrl::AboutBox()
 {
@@ -159,7 +159,7 @@ void CLbNvrIpcActivexCtrl::AboutBox()
 }
 
 
-// CLbNvrIpcActivexCtrl ÏûÏ¢´¦Àí³ÌĞò
+// CLbNvrIpcActivexCtrl æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 
 int CLbNvrIpcActivexCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -167,7 +167,7 @@ int CLbNvrIpcActivexCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (COleControl::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	// TODO:  ÔÚ´ËÌí¼ÓÄú×¨ÓÃµÄ´´½¨´úÂë
+	// TODO:  åœ¨æ­¤æ·»åŠ æ‚¨ä¸“ç”¨çš„åˆ›å»ºä»£ç 
 
 
 	InitNetSDK();
@@ -178,12 +178,13 @@ int CLbNvrIpcActivexCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CLbNvrIpcActivexCtrl::OnDestroy()
 {
 	COleControl::OnDestroy();
+
+	// TODO: åœ¨æ­¤å¤„æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç 
 	endSdk();
-	// TODO: ÔÚ´Ë´¦Ìí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂë
 }
 void CLbNvrIpcActivexCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 	SetFullScreen(!isFullScreen);
 	COleControl::OnLButtonDblClk(nFlags, point);
 }
@@ -191,20 +192,20 @@ void CLbNvrIpcActivexCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 BOOL CLbNvrIpcActivexCtrl::PreTranslateMessage(MSG* pMsg)
 {
-	// TODO: ÔÚ´ËÌí¼Ó×¨ÓÃ´úÂëºÍ/»òµ÷ÓÃ»ùÀà
+	// TODO: åœ¨æ­¤æ·»åŠ ä¸“ç”¨ä»£ç å’Œ/æˆ–è°ƒç”¨åŸºç±»
 	static CString aaaaaaa;
 	if (pMsg->message == WM_KEYUP) {
-		SetFullScreen(isFullScreen);
-		aaaaaaa.AppendFormat("ss:%d\n", pMsg->wParam);
-		if ('1' == pMsg->wParam)
-			MessageBox(aaaaaaa, "aa");
+		if (27 == pMsg->wParam) 
+		{
+			SetFullScreen(false);
+		}
 	}
 	return COleControl::PreTranslateMessage(pMsg);
 }
 
 bool CLbNvrIpcActivexCtrl::InitNetSDK()
 {
-	// ³õÊ¼»¯ SDK
+	// åˆå§‹åŒ– SDK
 	g_bNetSDKInitFlag = CLIENT_Init(DisConnectFunc, 0);
 	if (FALSE == g_bNetSDKInitFlag)
 	{
@@ -215,17 +216,17 @@ bool CLbNvrIpcActivexCtrl::InitNetSDK()
 	{
 		printf("Initialize client SDK done; \n");
 	}
-	//// »ñÈ¡ SDK °æ±¾ĞÅÏ¢
-	//// ´Ë²Ù×÷Îª¿ÉÑ¡²Ù×÷
+	//// è·å– SDK ç‰ˆæœ¬ä¿¡æ¯
+	//// æ­¤æ“ä½œä¸ºå¯é€‰æ“ä½œ
 	//DWORD dwNetSdkVersion = CLIENT_GetSDKVersion();
 	//printf("NetSDK version is [%d]\n", dwNetSdkVersion);
-	// ÉèÖÃ¶ÏÏßÖØÁ¬»Øµ÷½Ó¿Ú£¬ÉèÖÃ¹ı¶ÏÏßÖØÁ¬³É¹¦»Øµ÷º¯Êıºó£¬µ±Éè±¸³öÏÖ¶ÏÏßÇé¿ö£¬SDK	ÄÚ²¿»á×Ô¶¯½øĞĞÖØÁ¬²Ù×÷
-	// ´Ë²Ù×÷Îª¿ÉÑ¡²Ù×÷£¬µ«½¨ÒéÓÃ»§½øĞĞÉèÖÃ
+	// è®¾ç½®æ–­çº¿é‡è¿å›è°ƒæ¥å£ï¼Œè®¾ç½®è¿‡æ–­çº¿é‡è¿æˆåŠŸå›è°ƒå‡½æ•°åï¼Œå½“è®¾å¤‡å‡ºç°æ–­çº¿æƒ…å†µï¼ŒSDK	å†…éƒ¨ä¼šè‡ªåŠ¨è¿›è¡Œé‡è¿æ“ä½œ
+	// æ­¤æ“ä½œä¸ºå¯é€‰æ“ä½œï¼Œä½†å»ºè®®ç”¨æˆ·è¿›è¡Œè®¾ç½®
 	CLIENT_SetAutoReconnect(&HaveReConnect, 0);
-	// ÉèÖÃµÇÂ¼³¬Ê±Ê±¼äºÍ³¢ÊÔ´ÎÊı
-	// ´Ë²Ù×÷Îª¿ÉÑ¡²Ù×÷
-	int nWaitTime = 5000; // µÇÂ¼ÇëÇóÏìÓ¦³¬Ê±Ê±¼äÉèÖÃÎª 5s
-	int nTryTimes = 3; // µÇÂ¼Ê±³¢ÊÔ½¨Á¢Á´½Ó 3 ´Î
+	// è®¾ç½®ç™»å½•è¶…æ—¶æ—¶é—´å’Œå°è¯•æ¬¡æ•°
+	// æ­¤æ“ä½œä¸ºå¯é€‰æ“ä½œ
+	int nWaitTime = 5000; // ç™»å½•è¯·æ±‚å“åº”è¶…æ—¶æ—¶é—´è®¾ç½®ä¸º 5s
+	int nTryTimes = 3; // ç™»å½•æ—¶å°è¯•å»ºç«‹é“¾æ¥ 3 æ¬¡
 	CLIENT_SetConnectTime(nWaitTime, nTryTimes);
 	
 }
@@ -247,16 +248,16 @@ BSTR CLbNvrIpcActivexCtrl::LbLogin(LPCTSTR ip, USHORT port, LPCTSTR userName, LP
 	CString strResult;
 	strResult.Append("{");
 
-	// TODO: ÔÚ´ËÌí¼Óµ÷¶È´¦Àí³ÌĞò´úÂë
-	// ÉèÖÃ¸ü¶àÍøÂç²ÎÊı£¬NET_PARAM µÄ nWaittime£¬nConnectTryNum ³ÉÔ±Óë	CLIENT_SetConnectTime ½Ó¿ÚÉèÖÃµÄµÇÂ¼Éè±¸³¬Ê±Ê±¼äºÍ³¢ÊÔ´ÎÊıÒâÒåÏàÍ¬
-	// ´Ë²Ù×÷Îª¿ÉÑ¡²Ù×÷
+	// TODO: åœ¨æ­¤æ·»åŠ è°ƒåº¦å¤„ç†ç¨‹åºä»£ç 
+	// è®¾ç½®æ›´å¤šç½‘ç»œå‚æ•°ï¼ŒNET_PARAM çš„ nWaittimeï¼ŒnConnectTryNum æˆå‘˜ä¸	CLIENT_SetConnectTime æ¥å£è®¾ç½®çš„ç™»å½•è®¾å¤‡è¶…æ—¶æ—¶é—´å’Œå°è¯•æ¬¡æ•°æ„ä¹‰ç›¸åŒ
+	// æ­¤æ“ä½œä¸ºå¯é€‰æ“ä½œ
 	NET_PARAM stuNetParm = { 0 };
-	stuNetParm.nConnectTime = 2000; // µÇÂ¼Ê±³¢ÊÔ½¨Á¢Á´½ÓµÄ³¬Ê±Ê±¼ä
+	stuNetParm.nConnectTime = 2000; // ç™»å½•æ—¶å°è¯•å»ºç«‹é“¾æ¥çš„è¶…æ—¶æ—¶é—´
 	CLIENT_SetNetworkParam(&stuNetParm);
 	NET_DEVICEINFO_Ex stDevInfoEx = { 0 };
 	int nError = 0;
 	if (FALSE != g_bNetSDKInitFlag) {
-		// µÇÂ¼Éè±¸
+		// ç™»å½•è®¾å¤‡
 		g_lLoginHandle = CLIENT_LoginEx2(ip, port, userName, password, EM_LOGIN_SPEC_CAP_TCP, NULL, &stDevInfoEx, &nError);
 		if (0 == g_lLoginHandle)
 		{
@@ -268,7 +269,7 @@ BSTR CLbNvrIpcActivexCtrl::LbLogin(LPCTSTR ip, USHORT port, LPCTSTR userName, LP
 			strResult.AppendFormat("\"isSuccess\":\"%s\",\"error\":\"%d\",", "success", nError);
 			strResult.AppendFormat("\"MaxChannelCount\":\"%d\",", stDevInfoEx.nChanNum>1? stDevInfoEx.nChanNum:1);
 		}
-		// ÓÃ»§³õ´ÎµÇÂ¼Éè±¸£¬ĞèÒª³õÊ¼»¯Ò»Ğ©Êı¾İ²ÅÄÜÕı³£ÊµÏÖÒµÎñ¹¦ÄÜ£¬½¨ÒéµÇÂ¼ºóµÈ´ıÒ»Ğ¡¶ÎÊ±¼ä£¬¾ßÌåµÈ´ıÊ±¼äÒòÉè±¸¶øÒì
+		// ç”¨æˆ·åˆæ¬¡ç™»å½•è®¾å¤‡ï¼Œéœ€è¦åˆå§‹åŒ–ä¸€äº›æ•°æ®æ‰èƒ½æ­£å¸¸å®ç°ä¸šåŠ¡åŠŸèƒ½ï¼Œå»ºè®®ç™»å½•åç­‰å¾…ä¸€å°æ®µæ—¶é—´ï¼Œå…·ä½“ç­‰å¾…æ—¶é—´å› è®¾å¤‡è€Œå¼‚
 	}
 	strResult.Append("\"\":\"\"}");
 	return strResult.AllocSysString();
@@ -279,14 +280,14 @@ BSTR CLbNvrIpcActivexCtrl::LbPlay(SHORT channelSelected, SHORT playMode)
 
 	CString strResult;
 
-	// TODO: ÔÚ´ËÌí¼Óµ÷¶È´¦Àí³ÌĞò´úÂë
-	// ÅĞ¶ÏÊÇ·ñµÇÂ¼Éè±¸
+	// TODO: åœ¨æ­¤æ·»åŠ è°ƒåº¦å¤„ç†ç¨‹åºä»£ç 
+	// åˆ¤æ–­æ˜¯å¦ç™»å½•è®¾å¤‡
 	if (0 != g_lLoginHandle)
 	{
-		// ÊµÏÖÊµÊ±¼àÊÓ¹¦ÄÜÒµÎñ
-		// »ñÈ¡´°¿Ú¾ä±ú
+		// å®ç°å®æ—¶ç›‘è§†åŠŸèƒ½ä¸šåŠ¡
+		// è·å–çª—å£å¥æŸ„
 		HWND hWnd = GetSafeHwnd();
-		//¿ªÆôÊµÊ±¼àÊÓ
+		//å¼€å¯å®æ—¶ç›‘è§†
 		channel = channelSelected;
 		g_lRealHandle = CLIENT_RealPlayEx(g_lLoginHandle, channel, hWnd,
 			(DH_RealPlayType)playMode);
@@ -307,13 +308,13 @@ BSTR CLbNvrIpcActivexCtrl::LbPtzCommand(LONG command, USHORT param1, USHORT para
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	CString strResult;
-	// TODO: ÔÚ´ËÌí¼Óµ÷¶È´¦Àí³ÌĞò´úÂë
-	if (channel >= 0) {//Èç¹ûÍ¨µÀÓĞĞ§
+	// TODO: åœ¨æ­¤æ·»åŠ è°ƒåº¦å¤„ç†ç¨‹åºä»£ç 
+	if (channel >= 0) {//å¦‚æœé€šé“æœ‰æ•ˆ
 		strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_DHPTZControlEx2(g_lLoginHandle, channel, command, param1, param2, param3, isStop)? "success": "fail");
 	}
 	else {
 		strResult.AppendFormat("\"isSuccess\": \"%s\"","fail");
-		strResult.AppendFormat("\"error\": \"%s\"", "Í¨µÀºÅĞ¡ÓÚ0");
+		strResult.AppendFormat("\"error\": \"%s\"", "é€šé“å·å°äº0");
 	}
 	return strResult.AllocSysString();
 }
@@ -324,7 +325,7 @@ BSTR CLbNvrIpcActivexCtrl::LbSetChannel(USHORT channel)
 
 	CString strResult;
 
-	// TODO: ÔÚ´ËÌí¼Óµ÷¶È´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ è°ƒåº¦å¤„ç†ç¨‹åºä»£ç 
 	this->channel = channel;
 	strResult.AppendFormat("\"isSuccess\": \"%s\"", this->channel == channel? "success" : "fail");
 	return strResult.AllocSysString();
@@ -339,23 +340,23 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayBack(SHORT channel, LPCTSTR startTime, LPCTSTR 
 
 
 
-	// TODO: ÔÚ´ËÌí¼Óµ÷¶È´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ è°ƒåº¦å¤„ç†ç¨‹åºä»£ç 
 
 	if (0 != g_lLoginHandle)
 	{
 
-		// Â¼Ïñ»Ø·Å¹¦ÄÜ 
-		// »ñÈ¡¿ØÖÆÌ¨´°¿Ú¾ä±ú
+		// å½•åƒå›æ”¾åŠŸèƒ½ 
+		// è·å–æ§åˆ¶å°çª—å£å¥æŸ„
 		HWND hWnd = GetSafeHwnd();
-		// ÉèÖÃ»Ø·ÅÊ±µÄÂëÁ÷ÀàĞÍ
-		int nStreamType = 0; // 0-Ö÷¸¨ÂëÁ÷,1-Ö÷ÂëÁ÷,2-¸¨ÂëÁ÷
+		// è®¾ç½®å›æ”¾æ—¶çš„ç æµç±»å‹
+		int nStreamType = 0; // 0-ä¸»è¾…ç æµ,1-ä¸»ç æµ,2-è¾…ç æµ
 		CLIENT_SetDeviceMode(g_lLoginHandle, DH_RECORD_STREAM_TYPE,
 			&nStreamType);
-		// ÉèÖÃ»Ø·ÅÊ±µÄÂ¼ÏñÎÄ¼şÀàĞÍ
-		NET_RECORD_TYPE emFileType = NET_RECORD_TYPE_ALL; // ËùÓĞÂ¼Ïñ
+		// è®¾ç½®å›æ”¾æ—¶çš„å½•åƒæ–‡ä»¶ç±»å‹
+		NET_RECORD_TYPE emFileType = NET_RECORD_TYPE_ALL; // æ‰€æœ‰å½•åƒ
 		CLIENT_SetDeviceMode(g_lLoginHandle, DH_RECORD_TYPE, &emFileType);
-		//¿ªÆôÂ¼Ïñ»Ø·Å
-		int nChannelID = channel; // Í¨µÀºÅ
+		//å¼€å¯å½•åƒå›æ”¾
+		int nChannelID = channel; // é€šé“å·
 		NET_TIME stuStartTime = { 0 };
 		NET_TIME stuStopTime = { 0 };
 		if (sscanf(startTime, "%d-%d-%d   %d:%d:%d", &stuStartTime.dwYear, &stuStartTime.dwMonth, &stuStartTime.dwDay, &stuStartTime.dwHour, &stuStartTime.dwMinute, &stuStartTime.dwMinute) > 0
@@ -365,7 +366,7 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayBack(SHORT channel, LPCTSTR startTime, LPCTSTR 
 			if (0 == g_lPlayBackHandle)
 			{
 				strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
-				strResult.AppendFormat("\"error\": \"%s\"", "²¥·ÅÊ§°Ü");
+				strResult.AppendFormat("\"error\": \"%s\"", "æ’­æ”¾å¤±è´¥");
 			}
 			else {
 				strResult.AppendFormat("\"isSuccess\": \"%s\"", "success");
@@ -374,7 +375,7 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayBack(SHORT channel, LPCTSTR startTime, LPCTSTR 
 		else
 		{
 			strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
-			strResult.AppendFormat("\"error\": \"%s\"", "Ê±¼ä¸ñÊ½´íÎó");
+			strResult.AppendFormat("\"error\": \"%s\"", "æ—¶é—´æ ¼å¼é”™è¯¯");
 		}
 	}
 	return strResult.AllocSysString();
@@ -387,17 +388,17 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayBackContrl(SHORT command)
 
 	CString strResult;
 
-	// TODO: ÔÚ´ËÌí¼Óµ÷¶È´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ è°ƒåº¦å¤„ç†ç¨‹åºä»£ç 
 	if (0 != g_lPlayBackHandle) {
 		switch (command)
 		{
-			//Âı·Å
+			//æ…¢æ”¾
 			case 1:strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_SlowPlayBack(g_lPlayBackHandle)? "success" : "fail"); break;
-			//¿ì·Å
+			//å¿«æ”¾
 			case 2:strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_FastPlayBack(g_lPlayBackHandle) ? "success" : "fail"); break;
-			//Õı³£ËÙÂÊ
+			//æ­£å¸¸é€Ÿç‡
 			case 3:strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_NormalPlayBack(g_lPlayBackHandle) ? "success" : "fail"); break;
-			//ÔİÍ£/²¥·Å
+			//æš‚åœ/æ’­æ”¾
 			case 4:strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_PausePlayBack(g_lPlayBackHandle,isPause= !isPause) ? "success" : "fail"); 
 				strResult.AppendFormat("\"isPause\": \"%s\"", isPause ? "Pause" : "Play");
 				break;
@@ -418,7 +419,7 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayTime(ULONG startSecond)
 
 	CString strResult;
 
-	// TODO: ÔÚ´ËÌí¼Óµ÷¶È´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ è°ƒåº¦å¤„ç†ç¨‹åºä»£ç 
 	if (0 != g_lPlayBackHandle) {
 		strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_SeekPlayBack(g_lPlayBackHandle, startSecond, 0)? "success" : "fail");
 	}
@@ -432,33 +433,37 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayTime(ULONG startSecond)
 
 void CLbNvrIpcActivexCtrl::SetFullScreen(bool isFull)
 {	
-	if (isFullScreen)
-	{
-		//Full screen 
-		//Get displayer resolution 
-		int cx = GetSystemMetrics(SM_CXSCREEN);
-		int cy = GetSystemMetrics(SM_CYSCREEN);
-		//Save position information 
-		GetWindowPlacement(&_temppl);
-		//Modify style 
-		ModifyStyle(WS_CHILD, WS_POPUP);
-		//Modify main-window 
-		_tempparent = SetParent(NULL);
-		_tempparent->ShowWindow(SW_HIDE);
-		//Move window 
-		MoveWindow(0, 0, cx, cy);
-		//	SetWindowPos(&wndTopMost,0,0,cx,cy,NULL);
+	if (isFull != isFullScreen) {
+		if (!isFullScreen)
+		{
+			//Full screen 
+			//Get displayer resolution 
+			int cx = GetSystemMetrics(SM_CXSCREEN);
+			int cy = GetSystemMetrics(SM_CYSCREEN);
+			//Save position information 
+			GetWindowPlacement(&_temppl);
+			//Modify style 
+			ModifyStyle(WS_CHILD, WS_POPUP);
+			//Modify main-window 
+			_tempparent = SetParent(NULL);
+			_tempparent->ShowWindow(SW_HIDE);
+			//Move window 
+			MoveWindow(0, 0, cx, cy);
+			//	SetWindowPos(&wndTopMost,0,0,cx,cy,NULL);
+			
+		}
+		else
+		{//Restore
+		 //Restore main window 
+			_tempparent->ShowWindow(SW_SHOW);
+			SetParent(_tempparent);
+			//Restore style 
+			ModifyStyle(WS_POPUP, WS_CHILD);
+			//Restore position 
+			SetWindowPlacement(&_temppl);
+		}
 	}
-	else
-	{//Restore
-	 //Restore main window 
-		_tempparent->ShowWindow(SW_SHOW);
-		SetParent(_tempparent);
-		//Restore style 
-		ModifyStyle(WS_POPUP, WS_CHILD);
-		//Restore position 
-		SetWindowPlacement(&_temppl);
-	}
+	isFullScreen = isFull;
 }
 
 
@@ -468,7 +473,7 @@ BSTR CLbNvrIpcActivexCtrl::LbStopPlay()
 
 	CString strResult;
 
-	// TODO: ÔÚ´ËÌí¼Óµ÷¶È´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ è°ƒåº¦å¤„ç†ç¨‹åºä»£ç 
 	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_StopRealPlayEx(g_lRealHandle) ? "success" : "fail");
 	return strResult.AllocSysString();
 }
@@ -480,7 +485,7 @@ BSTR CLbNvrIpcActivexCtrl::LbStopBackPlay()
 
 	CString strResult;
 
-	// TODO: ÔÚ´ËÌí¼Óµ÷¶È´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ è°ƒåº¦å¤„ç†ç¨‹åºä»£ç 
 	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_StopPlayBack(g_lPlayBackHandle) ? "success" : "fail");
 	return strResult.AllocSysString();
 }
