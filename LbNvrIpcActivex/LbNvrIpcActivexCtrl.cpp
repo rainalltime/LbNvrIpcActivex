@@ -342,7 +342,7 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayBack(SHORT channel, LPCTSTR startTime, LPCTSTR 
 	if (0 != g_lLoginHandle)
 	{
 
-		// 录像回放功能
+		// 录像回放功能 
 		// 获取控制台窗口句柄
 		HWND hWnd = GetSafeHwnd();
 		// 设置回放时的码流类型
