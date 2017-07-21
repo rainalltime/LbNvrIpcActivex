@@ -30,6 +30,8 @@ BEGIN_DISPATCH_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbPtzCommand", dispidLbPtzCommand, LbPtzCommand, VT_BSTR, VTS_I4 VTS_UI2 VTS_UI2 VTS_UI2 VTS_UI2)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbSetChannel", dispidLbSetChannel, LbSetChannel, VT_BSTR, VTS_UI2)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbPlayBack", dispidLbPlayBack, LbPlayBack, VT_BSTR, VTS_I2 VTS_BSTR VTS_BSTR)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbPlayBackContrl", dispidLbPlayBackContrl, LbPlayBackContrl, VT_BSTR, VTS_I2)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbPlayTime", dispidLbPlayTime, LbPlayTime, VT_BSTR, VTS_UI4)
 END_DISPATCH_MAP()
 
 // 事件映射
@@ -180,7 +182,7 @@ void CLbNvrIpcActivexCtrl::OnDestroy()
 void CLbNvrIpcActivexCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	MessageBox("db","");
+
 	COleControl::OnLButtonDblClk(nFlags, point);
 }
 
@@ -375,4 +377,53 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayBack(SHORT channel, LPCTSTR startTime, LPCTSTR 
 		}
 	}
 	return strResult.AllocSysString();
+}
+
+
+BSTR CLbNvrIpcActivexCtrl::LbPlayBackContrl(SHORT command)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;
+
+	// TODO: 在此添加调度处理程序代码
+	if (0 != g_lPlayBackHandle) {
+		switch (command)
+		{
+			//慢放
+			case 1:strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_SlowPlayBack(g_lPlayBackHandle)? "success" : "fail"); break;
+			//快放
+			case 2:strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_FastPlayBack(g_lPlayBackHandle) ? "success" : "fail"); break;
+			//正常速率
+			case 3:strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_NormalPlayBack(g_lPlayBackHandle) ? "success" : "fail"); break;
+			//暂停/播放
+			case 4:strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_PausePlayBack(g_lPlayBackHandle,isPause= !isPause) ? "success" : "fail"); 
+				strResult.AppendFormat("\"isPause\": \"%s\"", isPause ? "Pause" : "Play");
+				break;
+		default:strResult.AppendFormat("\"isSuccess\": \"%s\"",  "fail");
+			break;
+		}
+	}
+	else {
+		strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
+	}
+	return strResult.AllocSysString();
+}
+
+
+BSTR CLbNvrIpcActivexCtrl::LbPlayTime(ULONG startSecond)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;
+
+	// TODO: 在此添加调度处理程序代码
+	if (0 != g_lPlayBackHandle) {
+		strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_SeekPlayBack(g_lPlayBackHandle, startSecond, 0)? "success" : "fail");
+	}
+	else
+		strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
+	return strResult.AllocSysString();
+
+	
 }

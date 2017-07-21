@@ -72,12 +72,19 @@ protected:
 	afx_msg BSTR LbSetChannel(USHORT channel);
 	//回放
 	afx_msg BSTR LbPlayBack(SHORT channel, LPCTSTR startTime, LPCTSTR stopTime);
+	//回放控制
+	afx_msg BSTR LbPlayBackContrl(SHORT command);
+	//跳转到指定的时间播放单位秒
+	afx_msg BSTR LbPlayTime(ULONG startSecond);
+
 // 事件映射
 	DECLARE_EVENT_MAP()
 
 // 调度和事件 ID
 public:
 	enum {
+		dispidLbPlayTime = 7L,
+		dispidLbPlayBackContrl = 6L,
 		dispidLbPlayBack = 5L,
 		dispidLbSetChannel = 4L,
 		dispidLbPtzCommand = 3L,
@@ -101,6 +108,7 @@ public:
 	LLONG g_lLoginHandle = 0L;
 	LLONG g_lRealHandle = 0;
 	LLONG g_lPlayBackHandle = 0;
+	bool isPause=false;
 	WORD channel;
 	//****************************
 	//类函数
@@ -121,4 +129,6 @@ public:
 	friend  void CALLBACK HaveReConnect(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort,
 		LDWORD dwUser);
 protected:
+	
+
 };
