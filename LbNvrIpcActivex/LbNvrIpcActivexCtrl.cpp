@@ -19,6 +19,7 @@ BEGIN_MESSAGE_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_LBUTTONDBLCLK()
+	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
 // 调度映射
@@ -118,16 +119,16 @@ CLbNvrIpcActivexCtrl::~CLbNvrIpcActivexCtrl()
 
 // CLbNvrIpcActivexCtrl::OnDraw - 绘图函数
 
-//void CLbNvrIpcActivexCtrl::OnDraw(
-//			CDC* pdc, const CRect& rcBounds, const CRect& /* rcInvalid */)
-//{
-//	if (!pdc)
-//		return;
-//
-//	// TODO:  用您自己的绘图代码替换下面的代码。
-//	pdc->FillRect(rcBounds, CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
-//	pdc->Ellipse(rcBounds);
-//}
+void CLbNvrIpcActivexCtrl::OnDraw(
+			CDC* pdc, const CRect& rcBounds, const CRect& /* rcInvalid */)
+{
+	if (!pdc)
+		return;
+
+	// TODO:  用您自己的绘图代码替换下面的代码。
+	if(playCount==0)
+	pdc->FillRect(rcBounds, CBrush::FromHandle((HBRUSH)GetStockObject(BLACK_BRUSH)));
+}
 
 // CLbNvrIpcActivexCtrl::DoPropExchange - 持久性支持
 
@@ -181,11 +182,13 @@ void CLbNvrIpcActivexCtrl::OnDestroy()
 
 	// TODO: 在此处添加消息处理程序代码
 	endSdk();
+	MessageBox(LogInf, "log");
 }
 void CLbNvrIpcActivexCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	SetFullScreen(!isFullScreen);
+	LogInf.Append("clk");
 	COleControl::OnLButtonDblClk(nFlags, point);
 }
 
@@ -298,6 +301,7 @@ BSTR CLbNvrIpcActivexCtrl::LbPlay(SHORT channelSelected, SHORT playMode)
 			strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
 		}
 		else {
+			playCount++;
 			strResult.AppendFormat("\"isSuccess\": \"%s\"", "success");
 		}
 	}
@@ -344,7 +348,6 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayBack(SHORT channel, LPCTSTR startTime, LPCTSTR 
 
 	if (0 != g_lLoginHandle)
 	{
-
 		// 录像回放功能 
 		// 获取控制台窗口句柄
 		HWND hWnd = GetSafeHwnd();
@@ -370,6 +373,7 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayBack(SHORT channel, LPCTSTR startTime, LPCTSTR 
 			}
 			else {
 				strResult.AppendFormat("\"isSuccess\": \"%s\"", "success");
+				playCount++;
 			}
 		}
 		else
@@ -432,7 +436,8 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayTime(ULONG startSecond)
 
 
 void CLbNvrIpcActivexCtrl::SetFullScreen(bool isFull)
-{	
+{
+	LogInf.AppendFormat("full:%d:%d\n", isFull, isFullScreen);
 	if (isFull != isFullScreen) {
 		if (!isFullScreen)
 		{
@@ -474,7 +479,8 @@ BSTR CLbNvrIpcActivexCtrl::LbStopPlay()
 	CString strResult;
 
 	// TODO: 在此添加调度处理程序代码
-	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_StopRealPlayEx(g_lRealHandle) ? "success" : "fail");
+	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_StopRealPlayEx(g_lRealHandle) ? ("success"+--playCount) : "fail");
+
 	return strResult.AllocSysString();
 }
 
@@ -486,7 +492,7 @@ BSTR CLbNvrIpcActivexCtrl::LbStopBackPlay()
 	CString strResult;
 
 	// TODO: 在此添加调度处理程序代码
-	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_StopPlayBack(g_lPlayBackHandle) ? "success" : "fail");
+	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_StopPlayBack(g_lPlayBackHandle) ? ("success" + --playCount) : "fail");
 	return strResult.AllocSysString();
 }
 
@@ -496,4 +502,14 @@ void CLbNvrIpcActivexCtrl::endSdk()
 	CLIENT_Logout(g_lLoginHandle);
 	CLIENT_Cleanup();
 	g_bNetSDKInitFlag = FALSE;
+}
+
+
+void CLbNvrIpcActivexCtrl::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	CTime 	m_time = CTime::GetCurrentTime();
+	lastClickTime = m_time.Format("%Y-%m-%d %H:%M:%S %A");
+	MessageBox(lastClickTime,"0");
+	COleControl::OnLButtonUp(nFlags, point);
 }

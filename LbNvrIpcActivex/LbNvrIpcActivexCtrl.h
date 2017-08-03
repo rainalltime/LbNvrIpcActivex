@@ -18,7 +18,7 @@ public:
 
 // 重写
 public:
-//	virtual void OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid);
+	virtual void OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid);
 	virtual void DoPropExchange(CPropExchange* pPX);
 	virtual void OnResetState();
 
@@ -43,7 +43,7 @@ protected:
 	//外部调用的函数
 
 	////登录函数//四个参数分别代表DVRip地址，DVR端口号，登录名，登录密码。
-	//返回值MaxChannelCount最大通道数，isSuccess是否成功-2（未知、未调用）-1（失败）0（成功）,error错误编号
+	//返回值MaxChannelCount最大通道数，isSuccess是否成功,error错误编号
 	afx_msg BSTR LbLogin(LPCTSTR ip, USHORT port, LPCTSTR userName, LPCTSTR password);
 	////播放函数，channelSelected实时监视通道号，如果rType为RType_Multiplay该参数保留。当rType为RType_Multiplay_1~RType_Multiplay_16时，nChannelID决定了预览的画面，
 	////如当RType_Multiplay_4时，nChannelID为4、5、6、7其中一个值表示预览第5到第7通道的四画面预览 
@@ -67,7 +67,7 @@ protected:
 		*/
 	afx_msg BSTR LbPlay(SHORT channelSelected, SHORT playMode);
 	//云台控制
-	/*************type详细说明
+	/*************command详细说明
 	参数//意义
 	0	// 上
 	1	// 下
@@ -157,16 +157,23 @@ protected:
 	128	// 最大命令值
 	*/
 	afx_msg BSTR LbPtzCommand(LONG command, USHORT param1, USHORT param2, USHORT param3, USHORT isStop);
-    //设置通道号
+    //设置通道号，多画面预览时设置要控制的通道
 	afx_msg BSTR LbSetChannel(USHORT channel);
-	//回放
+	//回放参数channel（通道）开始时间，结束时间,格式“yyyy-mm-dd hh:mm：ss”比如 2017-7-23 10:10:13 返回值isSuccess是否成功
 	afx_msg BSTR LbPlayBack(SHORT channel, LPCTSTR startTime, LPCTSTR stopTime);
-	//回放控制
+	//回放控制,参数command(指令)意义如下,返回值isSuccess是否成功
+	/*参数意义：
+	1  当前播放速度减半
+	2  当前播放速度翻倍
+	3  恢复正常播放速度
+	4  暂停/播放
+	*/
 	afx_msg BSTR LbPlayBackContrl(SHORT command);
-	//跳转到指定的时间播放单位秒
+	//跳转到指定的时间播放，单位秒，例：若开始播放时间为10：10：00 调用LbPlayTime(2*60*60) 则会从12：10：00播放 返回值isSuccess是否成功
 	afx_msg BSTR LbPlayTime(ULONG startSecond);
-	//
+	//停止实时播放 返回值isSuccess是否成功
 	afx_msg BSTR LbStopPlay();
+	//停止回放播放 返回值isSuccess是否成功
 	afx_msg BSTR LbStopBackPlay();
 
 // 事件映射
@@ -188,6 +195,7 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 
@@ -198,11 +206,14 @@ public:
 	//retSuccess=0
 	//}retIsSuccess= retUnknown;
 	//CString retJson;
+	CString lastClickTime;//最后一次单击的时间
 	BOOL g_bNetSDKInitFlag = FALSE;
 	LLONG g_lLoginHandle = 0L;
 	LLONG g_lRealHandle = 0;
 	LLONG g_lPlayBackHandle = 0;
+	int playCount = 0;
 	bool isPause=false;
+	CString LogInf;
 	WORD channel;
 	//用于全屏
 	bool isFullScreen=false;
@@ -232,12 +243,6 @@ public:
 	friend  void CALLBACK HaveReConnect(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort,
 		LDWORD dwUser);
 protected:
-	
-
-public:
-
-protected:
-
 public:
 	
 };
