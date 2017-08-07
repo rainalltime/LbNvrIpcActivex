@@ -175,13 +175,15 @@ protected:
 	afx_msg BSTR LbStopPlay();
 	//停止回放播放 返回值isSuccess是否成功
 	afx_msg BSTR LbStopBackPlay();
-
+	//最后点击的时间
+	afx_msg BSTR getLastClickTime();
 // 事件映射
 	DECLARE_EVENT_MAP()
 
 // 调度和事件 ID
 public:
 	enum {
+		dispidgetLastClickTime = 10L,
 		dispidLbStopBackPlay = 9L,
 		dispidLbStopPlay = 8L,
 		dispidLbPlayTime = 7L,
@@ -206,7 +208,7 @@ public:
 	//retSuccess=0
 	//}retIsSuccess= retUnknown;
 	//CString retJson;
-	CString lastClickTime;//最后一次单击的时间
+	CString lastClickTime="未点击";//最后一次单击的时间
 	BOOL g_bNetSDKInitFlag = FALSE;
 	LLONG g_lLoginHandle = 0L;
 	LLONG g_lRealHandle = 0;
@@ -243,6 +245,4 @@ public:
 	friend  void CALLBACK HaveReConnect(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort,
 		LDWORD dwUser);
 protected:
-public:
-	
 };

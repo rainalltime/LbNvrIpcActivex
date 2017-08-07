@@ -35,6 +35,7 @@ BEGIN_DISPATCH_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbPlayTime", dispidLbPlayTime, LbPlayTime, VT_BSTR, VTS_UI4)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbStopPlay", dispidLbStopPlay, LbStopPlay, VT_BSTR, VTS_NONE)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbStopBackPlay", dispidLbStopBackPlay, LbStopBackPlay, VT_BSTR, VTS_NONE)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "getLastClickTime", dispidgetLastClickTime, getLastClickTime, VT_BSTR, VTS_NONE)
 END_DISPATCH_MAP()
 
 // 事件映射
@@ -182,7 +183,7 @@ void CLbNvrIpcActivexCtrl::OnDestroy()
 
 	// TODO: 在此处添加消息处理程序代码
 	endSdk();
-	MessageBox(LogInf, "log");
+//	MessageBox(LogInf, "log");
 }
 void CLbNvrIpcActivexCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
@@ -282,6 +283,7 @@ BSTR CLbNvrIpcActivexCtrl::LbPlay(SHORT channelSelected, SHORT playMode)
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	CString strResult;
+	strResult.Append("{");
 
 	// TODO: 在此添加调度处理程序代码
 	// 判断是否登录设备
@@ -296,8 +298,21 @@ BSTR CLbNvrIpcActivexCtrl::LbPlay(SHORT channelSelected, SHORT playMode)
 			(DH_RealPlayType)playMode);
 		if (0 == g_lRealHandle)
 		{
-			strResult.AppendFormat("\"error\": \"%x\"",
-				CLIENT_GetLastError());
+			CString errTemp1;
+			switch (CLIENT_GetLastError()) {
+			case 1: errTemp1 = "密码错误"; break;
+			case 2: errTemp1 = "账号错误"; break;
+			case 3: errTemp1 = "请求超时"; break;
+			case 4: errTemp1 = "此账号已登录"; break;
+			case 5: errTemp1 = "此账号已被锁定"; break;
+			case 6: errTemp1 = "此账号已列入黑名单"; break;
+			case 7: errTemp1 = "系统正忙"; break;
+			case 9: errTemp1 = "无法连接到设备"; break;
+			default:errTemp1 = "登陆失败";
+
+			}
+			strResult.AppendFormat("\"error\": \"%s\"",
+				errTemp1);
 			strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
 		}
 		else {
@@ -305,6 +320,7 @@ BSTR CLbNvrIpcActivexCtrl::LbPlay(SHORT channelSelected, SHORT playMode)
 			strResult.AppendFormat("\"isSuccess\": \"%s\"", "success");
 		}
 	}
+	strResult.Append("}");
 	return strResult.AllocSysString();
 }
 BSTR CLbNvrIpcActivexCtrl::LbPtzCommand(LONG command, USHORT param1, USHORT param2, USHORT param3, USHORT isStop)
@@ -312,6 +328,7 @@ BSTR CLbNvrIpcActivexCtrl::LbPtzCommand(LONG command, USHORT param1, USHORT para
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	CString strResult;
+	strResult.Append("{");
 	// TODO: 在此添加调度处理程序代码
 	if (channel >= 0) {//如果通道有效
 		strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_DHPTZControlEx2(g_lLoginHandle, channel, command, param1, param2, param3, isStop)? "success": "fail");
@@ -320,6 +337,7 @@ BSTR CLbNvrIpcActivexCtrl::LbPtzCommand(LONG command, USHORT param1, USHORT para
 		strResult.AppendFormat("\"isSuccess\": \"%s\"","fail");
 		strResult.AppendFormat("\"error\": \"%s\"", "通道号小于0");
 	}
+	strResult.Append("}");
 	return strResult.AllocSysString();
 }
 
@@ -328,10 +346,11 @@ BSTR CLbNvrIpcActivexCtrl::LbSetChannel(USHORT channel)
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	CString strResult;
-
+	strResult.Append("{");
 	// TODO: 在此添加调度处理程序代码
 	this->channel = channel;
 	strResult.AppendFormat("\"isSuccess\": \"%s\"", this->channel == channel? "success" : "fail");
+	strResult.Append("}");
 	return strResult.AllocSysString();
 }
 
@@ -341,6 +360,7 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayBack(SHORT channel, LPCTSTR startTime, LPCTSTR 
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	CString strResult;
+	strResult.Append("{");
 
 
 
@@ -382,6 +402,7 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayBack(SHORT channel, LPCTSTR startTime, LPCTSTR 
 			strResult.AppendFormat("\"error\": \"%s\"", "时间格式错误");
 		}
 	}
+	strResult.Append("}");
 	return strResult.AllocSysString();
 }
 
@@ -391,6 +412,7 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayBackContrl(SHORT command)
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	CString strResult;
+	strResult.Append("{");
 
 	// TODO: 在此添加调度处理程序代码
 	if (0 != g_lPlayBackHandle) {
@@ -413,6 +435,7 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayBackContrl(SHORT command)
 	else {
 		strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
 	}
+	strResult.Append("}");
 	return strResult.AllocSysString();
 }
 
@@ -421,14 +444,17 @@ BSTR CLbNvrIpcActivexCtrl::LbPlayTime(ULONG startSecond)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
+
 	CString strResult;
+	strResult.Append("{");
 
 	// TODO: 在此添加调度处理程序代码
 	if (0 != g_lPlayBackHandle) {
-		strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_SeekPlayBack(g_lPlayBackHandle, startSecond, 0)? "success" : "fail");
+		strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_SeekPlayBack(g_lPlayBackHandle, startSecond, 0) ? "success" : "fail");
 	}
 	else
 		strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
+	strResult.Append("}");
 	return strResult.AllocSysString();
 
 	
@@ -477,9 +503,11 @@ BSTR CLbNvrIpcActivexCtrl::LbStopPlay()
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	CString strResult;
+	strResult.Append("{");
 
 	// TODO: 在此添加调度处理程序代码
 	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_StopRealPlayEx(g_lRealHandle) ? ("success"+--playCount) : "fail");
+	strResult.Append("}");
 
 	return strResult.AllocSysString();
 }
@@ -490,9 +518,11 @@ BSTR CLbNvrIpcActivexCtrl::LbStopBackPlay()
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	CString strResult;
+	strResult.Append("{");
 
 	// TODO: 在此添加调度处理程序代码
 	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_StopPlayBack(g_lPlayBackHandle) ? ("success" + --playCount) : "fail");
+	strResult.Append("}");
 	return strResult.AllocSysString();
 }
 
@@ -509,7 +539,20 @@ void CLbNvrIpcActivexCtrl::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	CTime 	m_time = CTime::GetCurrentTime();
-	lastClickTime = m_time.Format("%Y-%m-%d %H:%M:%S %A");
-	MessageBox(lastClickTime,"0");
+	lastClickTime = m_time.Format("%Y-%m-%d %H:%M:%S");
 	COleControl::OnLButtonUp(nFlags, point);
+}
+
+
+BSTR CLbNvrIpcActivexCtrl::getLastClickTime()
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;
+	strResult.Append("{");
+
+	// TODO: 在此添加调度处理程序代码
+	strResult.AppendFormat("\"lastClickTime\":\"%s\"", lastClickTime);
+	strResult.Append("}");
+	return strResult.AllocSysString();
 }

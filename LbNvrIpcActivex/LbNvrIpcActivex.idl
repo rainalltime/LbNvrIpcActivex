@@ -31,6 +31,7 @@ library LbNvrIpcActivexLib
 			[id(7)] BSTR LbPlayTime(ULONG startSecond);
 			[id(8)] BSTR LbStopPlay();
 			[id(9)] BSTR LbStopBackPlay();
+			[id(10)] BSTR getLastClickTime();
 	};
 
 	//  CLbNvrIpcActivexCtrl 的事件调度接口
