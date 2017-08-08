@@ -3,7 +3,7 @@
 #include "dhnetsdk.h"
 #include "avglobal.h"
 #include <MsHTML.h>  
-
+CString tempLog;
 // LbNvrIpcActivexCtrl.h : CLbNvrIpcActivexCtrl ActiveX 控件类的声明。
 
 
@@ -193,12 +193,18 @@ protected:
 	afx_msg BSTR LbStopBackPlay();
 	//最后点击的时间
 	afx_msg BSTR getLastClickTime();
+	//开始对讲
+	afx_msg BSTR LbTalkStart();
+	//停止对讲
+	BSTR LbTalkStop();
 // 事件映射
 	DECLARE_EVENT_MAP()
 
 // 调度和事件 ID
 public:
 	enum {
+		dispidLbTalkStop = 14L,
+		dispidLbTalkStart = 13L,
 		dispidLbSetVideoEffect = 12L,
 		dispidLbGetVideoEffect = 11L,
 		dispidgetLastClickTime = 10L,
@@ -231,6 +237,7 @@ public:
 	LLONG g_lLoginHandle = 0L;
 	LLONG g_lRealHandle = 0;
 	LLONG g_lPlayBackHandle = 0;
+	LLONG g_lTalkHandle = 0;
 	int playCount = 0;
 	bool isPause=false;
 	CString LogInf;
@@ -262,6 +269,6 @@ public:
 	// 通过 CLIENT_SetAutoReconnect 设置该回调函数，当已断线的设备重连成功时，SDK 会调用该函数
 	friend  void CALLBACK HaveReConnect(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort,
 		LDWORD dwUser);
-protected:
-
+	//回调函数语音对讲
+	friend void _stdcall AudioDataCallBack(LONG lTalkHandle, char *pDataBuf, DWORD dwBufSize, BYTE byAudioFlag, DWORD dwUser);
 };

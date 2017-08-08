@@ -34,6 +34,8 @@ library LbNvrIpcActivexLib
 			[id(10)] BSTR getLastClickTime();
 			[id(11)] BSTR LbGetVideoEffect();
 			[id(12)] BSTR LbSetVideoEffect(SHORT nBrightness, SHORT nContrast, SHORT nHue, SHORT nSaturation);
+			[id(13)] BSTR LbTalkStart();
+			[id(14)] BSTR LbTalkStop();
 	};
 	//  CLbNvrIpcActivexCtrl 的事件调度接口
 	[ 

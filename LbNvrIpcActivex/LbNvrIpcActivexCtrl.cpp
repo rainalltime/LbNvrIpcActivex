@@ -35,6 +35,8 @@ BEGIN_DISPATCH_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "getLastClickTime", dispidgetLastClickTime, getLastClickTime, VT_BSTR, VTS_NONE)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbGetVideoEffect", dispidLbGetVideoEffect, LbGetVideoEffect, VT_BSTR, VTS_NONE)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbSetVideoEffect", dispidLbSetVideoEffect, LbSetVideoEffect, VT_BSTR, VTS_I2 VTS_I2 VTS_I2 VTS_I2)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbTalkStart", dispidLbTalkStart, LbTalkStart, VT_BSTR, VTS_NONE)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbTalkStop", dispidLbTalkStop, LbTalkStop, VT_BSTR, VTS_NONE)
 END_DISPATCH_MAP()
 
 // 事件映射
@@ -502,6 +504,8 @@ void CLbNvrIpcActivexCtrl::SetFullScreen(bool isFull)
 }
 
 
+
+
 BSTR CLbNvrIpcActivexCtrl::LbStopPlay()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
@@ -584,9 +588,6 @@ BSTR CLbNvrIpcActivexCtrl::LbGetVideoEffect()
 	else {
 		strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
 	}
-
-
-
 	strResult.Append("}");
 	return strResult.AllocSysString();
 }
@@ -597,6 +598,91 @@ BSTR CLbNvrIpcActivexCtrl::LbSetVideoEffect(SHORT nBrightness, SHORT nContrast, 
 	strResult.Append("{");
 	// TODO: 在此添加调度处理程序代码
 	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_ClientSetVideoEffect(g_lRealHandle,nBrightness, nContrast,nHue, nSaturation) ? "success"  : "fail");
+	strResult.Append("}");
+	return strResult.AllocSysString();
+}
+void _stdcall AudioDataCallBack(LONG lTalkHandle, char * pDataBuf, DWORD dwBufSize, BYTE byAudioFlag, DWORD dwUser)
+{
+
+	// 针对lTalkHandle这次对讲的数据处理
+
+	if (0 == byAudioFlag)//编码后的音频数据，发给设备端
+	{
+		tempLog.Append("1");
+		DWORD dwSendLen = CLIENT_TalkSendData(lTalkHandle, pDataBuf, dwBufSize);
+		if (dwSendLen != (DWORD)dwBufSize)
+		{
+			//Error occurred when sending the user audio data to the device
+		}
+	}
+	else if(1 == byAudioFlag)//设备发过来的数据，解码播放
+	{
+		tempLog.Append("2");
+		CLIENT_AudioDec(pDataBuf, dwBufSize);
+	}
+}
+
+BSTR CLbNvrIpcActivexCtrl::LbTalkStart()
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;
+	strResult.Append("{");
+
+	// TODO: 在此添加调度处理程序代码
+
+	DHDEV_TALKFORMAT_LIST lstTalkEncode = { 0 };
+	int nRetlen = 0;
+	BOOL bSuccess = CLIENT_QueryDevState(g_lLoginHandle, DH_DEVSTATE_TALK_ECTYPE, (char*)&lstTalkEncode, sizeof(DHDEV_TALKFORMAT_LIST), &nRetlen, 2000);
+	if (!(bSuccess&&nRetlen == sizeof(DHDEV_TALKFORMAT_LIST)))
+	{
+		strResult.AppendFormat("\"isSuccess\":\"query talk format failed\", \"error \"=\" %d\"\n", CLIENT_GetLastError());
+	}
+	else {
+		DHDEV_TALKDECODE_INFO curTalkMode;
+		curTalkMode.encodeType = DH_TALK_DEFAULT;
+		curTalkMode.dwSampleRate = 8000;
+		curTalkMode.nAudioBit = 8;
+		curTalkMode = lstTalkEncode.type[0];
+
+		// 设置客户端模式语音对讲模式
+		bSuccess = CLIENT_SetDeviceMode(g_lLoginHandle, DH_TALK_ENCODE_TYPE, &curTalkMode);
+
+		//	开始对讲
+		//此处可能有bug无测试环境
+		g_lTalkHandle = CLIENT_StartTalkEx(g_lLoginHandle, (pfAudioDataCallBack)&AudioDataCallBack, (DWORD)0);
+		if (0 != g_lTalkHandle)
+		{
+			//	启动本地录音库，进行录音采集，如果只是单向语音对讲(DVR->PC)可以不用调用该接口
+			//CLIENT_SetVolume(lTalkHandle, 100);//音量设置
+			bSuccess = CLIENT_RecordStart();
+			if (bSuccess == FALSE)
+			{
+				CLIENT_StopTalkEx(g_lTalkHandle);
+				strResult.AppendFormat("\"isSuccess\":\"Start local record failed!\"\n");
+			}
+		}
+		else
+		{
+			printf("\"isSuccess\":\"Open talk failed!\", \"error\":\"%d\"\n", CLIENT_GetLastError());
+		}
+	}
+	strResult.Append("}");
+
+	return strResult.AllocSysString();
+}
+
+
+BSTR CLbNvrIpcActivexCtrl::LbTalkStop()
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;
+	strResult.Append("{");
+	// TODO: 在此添加调度处理程序代码
+	// 停止本地录音库
+	// 停止语音对讲
+	strResult.AppendFormat("\"isSuccess\": \"%s\"", (CLIENT_RecordStop()&&CLIENT_StopTalkEx(g_lTalkHandle)) ? "success"  : "fail");
 	strResult.Append("}");
 	return strResult.AllocSysString();
 }
