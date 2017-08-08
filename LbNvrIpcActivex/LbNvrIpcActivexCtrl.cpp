@@ -590,15 +590,13 @@ BSTR CLbNvrIpcActivexCtrl::LbGetVideoEffect()
 	strResult.Append("}");
 	return strResult.AllocSysString();
 }
-
-
 BSTR CLbNvrIpcActivexCtrl::LbSetVideoEffect(SHORT nBrightness, SHORT nContrast, SHORT nHue, SHORT nSaturation)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	CString strResult;
 	strResult.Append("{");
 	// TODO: 在此添加调度处理程序代码
-	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_ClientSetVideoEffect(g_lRealHandle,nBrightness, nContrast,nHue, nSaturation) ? ("success" + --playCount) : "fail");
+	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_ClientSetVideoEffect(g_lRealHandle,nBrightness, nContrast,nHue, nSaturation) ? "success"  : "fail");
 	strResult.Append("}");
 	return strResult.AllocSysString();
 }
