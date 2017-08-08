@@ -1,6 +1,4 @@
-﻿// LbNvrIpcActivexCtrl.cpp : CLbNvrIpcActivexCtrl ActiveX 控件类的实现。
-
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "LbNvrIpcActivex.h"
 #include "LbNvrIpcActivexCtrl.h"
 #include "LbNvrIpcActivexPropPage.h"
@@ -21,7 +19,6 @@ BEGIN_MESSAGE_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
-
 // 调度映射
 
 BEGIN_DISPATCH_MAP(CLbNvrIpcActivexCtrl, COleControl)
@@ -319,6 +316,11 @@ BSTR CLbNvrIpcActivexCtrl::LbPlay(SHORT channelSelected, SHORT playMode)
 			playCount++;
 			strResult.AppendFormat("\"isSuccess\": \"%s\"", "success");
 		}
+	}
+	else {
+		strResult.AppendFormat("\"error\": \"%s\"",
+			"登陆失败");
+		strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
 	}
 	strResult.Append("}");
 	return strResult.AllocSysString();
