@@ -33,6 +33,8 @@ BEGIN_DISPATCH_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbStopPlay", dispidLbStopPlay, LbStopPlay, VT_BSTR, VTS_NONE)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbStopBackPlay", dispidLbStopBackPlay, LbStopBackPlay, VT_BSTR, VTS_NONE)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "getLastClickTime", dispidgetLastClickTime, getLastClickTime, VT_BSTR, VTS_NONE)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbGetVideoEffect", dispidLbGetVideoEffect, LbGetVideoEffect, VT_BSTR, VTS_NONE)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbSetVideoEffect", dispidLbSetVideoEffect, LbSetVideoEffect, VT_BSTR, VTS_I2 VTS_I2 VTS_I2 VTS_I2)
 END_DISPATCH_MAP()
 
 // 事件映射
@@ -555,6 +557,48 @@ BSTR CLbNvrIpcActivexCtrl::getLastClickTime()
 
 	// TODO: 在此添加调度处理程序代码
 	strResult.AppendFormat("\"lastClickTime\":\"%s\"", lastClickTime);
+	strResult.Append("}");
+	return strResult.AllocSysString();
+}
+
+
+BSTR CLbNvrIpcActivexCtrl::LbGetVideoEffect()
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;	
+	strResult.Append("{");
+
+	// TODO: 在此添加调度处理程序代码
+	unsigned char *nBrightness=0,
+		unsigned char *nContrast=0,
+		unsigned char *nHue=0,
+		unsigned char *nSaturation=0;
+	if (CLIENT_ClientGetVideoEffect(g_lRealHandle, nBrightness, nContrast, nHue, nSaturation)) {
+		strResult.AppendFormat("\"isSuccess\": \"%s\"", "success");
+		strResult.AppendFormat("\"nBrightness\": \"%d\"", nBrightness);
+		strResult.AppendFormat("\"nContrast\": \"%d\"", nContrast);
+		strResult.AppendFormat("\"nHue\": \"%d\"", nHue);
+		strResult.AppendFormat("\"nSaturation\": \"%d\"", nSaturation);
+	}
+	else {
+		strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
+	}
+
+
+
+	strResult.Append("}");
+	return strResult.AllocSysString();
+}
+
+
+BSTR CLbNvrIpcActivexCtrl::LbSetVideoEffect(SHORT nBrightness, SHORT nContrast, SHORT nHue, SHORT nSaturation)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+	CString strResult;
+	strResult.Append("{");
+	// TODO: 在此添加调度处理程序代码
+	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_ClientSetVideoEffect(g_lRealHandle,nBrightness, nContrast,nHue, nSaturation) ? ("success" + --playCount) : "fail");
 	strResult.Append("}");
 	return strResult.AllocSysString();
 }

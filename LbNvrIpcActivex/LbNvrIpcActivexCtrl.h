@@ -161,6 +161,20 @@ protected:
 	afx_msg BSTR LbPtzCommand(LONG command, USHORT param1, USHORT param2, USHORT param3, USHORT isStop);
     //设置通道号，多画面预览时设置要控制的通道
 	afx_msg BSTR LbSetChannel(USHORT channel);
+	//获得解码库视频参数，只对实时监控有效。返回值：
+	//isSuccess是否成功
+	//nBrightness ：返回亮度指针(0 - 255)
+	//	nContrast：	//	返回对比度指针(0 - 255)
+	//	nHue：	//	返回色度指针(0 - 255)
+	//nSaturation：	//	返回饱和度指针(0 - 255)
+	BSTR LbGetVideoEffect();
+	//设置解码库视频参数，只对实时监控有效。参数：
+	//nBrightness ：设置亮度指针(0 - 255)
+	//	nContrast：	//	设置对比度指针(0 - 255)
+	//	nHue：	//	设置色度指针(0 - 255)
+	//nSaturation：	//	设置饱和度指针(0 - 255)
+	//返回值：isSuccess是否成功
+	BSTR LbSetVideoEffect(SHORT nBrightness, SHORT nContrast, SHORT nHue, SHORT nSaturation);
 	//回放参数channel（通道）开始时间，结束时间,格式“yyyy-mm-dd hh:mm：ss”比如 2017-7-23 10:10:13 返回值isSuccess是否成功
 	afx_msg BSTR LbPlayBack(SHORT channel, LPCTSTR startTime, LPCTSTR stopTime);
 	//回放控制,参数command(指令)意义如下,返回值isSuccess是否成功
@@ -185,6 +199,8 @@ protected:
 // 调度和事件 ID
 public:
 	enum {
+		dispidLbSetVideoEffect = 12L,
+		dispidLbGetVideoEffect = 11L,
 		dispidgetLastClickTime = 10L,
 		dispidLbStopBackPlay = 9L,
 		dispidLbStopPlay = 8L,
@@ -247,4 +263,5 @@ public:
 	friend  void CALLBACK HaveReConnect(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort,
 		LDWORD dwUser);
 protected:
+
 };
