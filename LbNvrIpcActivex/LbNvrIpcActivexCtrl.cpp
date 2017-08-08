@@ -263,15 +263,27 @@ BSTR CLbNvrIpcActivexCtrl::LbLogin(LPCTSTR ip, USHORT port, LPCTSTR userName, LP
 	if (FALSE != g_bNetSDKInitFlag) {
 		// 登录设备
 		g_lLoginHandle = CLIENT_LoginEx2(ip, port, userName, password, EM_LOGIN_SPEC_CAP_TCP, NULL, &stDevInfoEx, &nError);
+		CString errTemp1;
+		switch (nError) {
+		case 1: errTemp1 = "密码错误"; break;
+		case 2: errTemp1 = "账号错误"; break;
+		case 3: errTemp1 = "请求超时"; break;
+		case 4: errTemp1 = "此账号已登录"; break;
+		case 5: errTemp1 = "此账号已被锁定"; break;
+		case 6: errTemp1 = "此账号已列入黑名单"; break;
+		case 7: errTemp1 = "系统正忙"; break;
+		case 9: errTemp1 = "无法连接到设备"; break;
+		default:errTemp1 = "登陆失败";
+		}
 		if (0 == g_lLoginHandle)
 		{
 			strResult.AppendFormat("\"isSuccess\":\"%s\",", "fail");
-			strResult.AppendFormat("\"error\":\"%d\",", nError);
+			strResult.AppendFormat("\"error\":\"%s\",", errTemp1);
 		}
 		else
 		{
-			strResult.AppendFormat("\"isSuccess\":\"%s\",\"error\":\"%d\",", "success", nError);
-			strResult.AppendFormat("\"MaxChannelCount\":\"%d\",", stDevInfoEx.nChanNum>1? stDevInfoEx.nChanNum:1);
+			strResult.AppendFormat("\"isSuccess\":\"%s\",\"error\":\"%s\",", "success", "登录成功");
+			strResult.AppendFormat("\"MaxChannelCount\":\"%d\",", stDevInfoEx.nChanNum>1 ? stDevInfoEx.nChanNum : 1);
 		}
 		// 用户初次登录设备，需要初始化一些数据才能正常实现业务功能，建议登录后等待一小段时间，具体等待时间因设备而异
 	}
@@ -298,21 +310,9 @@ BSTR CLbNvrIpcActivexCtrl::LbPlay(SHORT channelSelected, SHORT playMode)
 			(DH_RealPlayType)playMode);
 		if (0 == g_lRealHandle)
 		{
-			CString errTemp1;
-			switch (CLIENT_GetLastError()) {
-			case 1: errTemp1 = "密码错误"; break;
-			case 2: errTemp1 = "账号错误"; break;
-			case 3: errTemp1 = "请求超时"; break;
-			case 4: errTemp1 = "此账号已登录"; break;
-			case 5: errTemp1 = "此账号已被锁定"; break;
-			case 6: errTemp1 = "此账号已列入黑名单"; break;
-			case 7: errTemp1 = "系统正忙"; break;
-			case 9: errTemp1 = "无法连接到设备"; break;
-			default:errTemp1 = "登陆失败";
 
-			}
-			strResult.AppendFormat("\"error\": \"%s\"",
-				errTemp1);
+			strResult.AppendFormat("\"error\": \"%d\"",
+				CLIENT_GetLastError());
 			strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
 		}
 		else {

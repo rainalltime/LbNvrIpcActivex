@@ -33,9 +33,7 @@ library LbNvrIpcActivexLib
 			[id(9)] BSTR LbStopBackPlay();
 			[id(10)] BSTR getLastClickTime();
 	};
-
 	//  CLbNvrIpcActivexCtrl 的事件调度接口
-
 	[ 
 		uuid(00C2F5AD-67FF-4B20-9E97-CFAC6A8947D3)	
 	]
@@ -43,7 +41,6 @@ library LbNvrIpcActivexLib
 	{
 		properties:
 			//  事件接口没有任何属性
-
 		methods:
 	};
 

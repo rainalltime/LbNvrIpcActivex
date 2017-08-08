@@ -2,6 +2,7 @@
 #include "dhconfigsdk.h"
 #include "dhnetsdk.h"
 #include "avglobal.h"
+#include <MsHTML.h>  
 
 // LbNvrIpcActivexCtrl.h : CLbNvrIpcActivexCtrl ActiveX 控件类的声明。
 
@@ -22,7 +23,8 @@ public:
 	virtual void DoPropExchange(CPropExchange* pPX);
 	virtual void OnResetState();
 
-// 实现
+// 实现//别忘了#include <MsHTML.h>  
+//m_WebBrowser是一个WebBrowser的Activex控件对象。  
 protected:
 	~CLbNvrIpcActivexCtrl();
 
