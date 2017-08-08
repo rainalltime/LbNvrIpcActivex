@@ -319,7 +319,7 @@ BSTR CLbNvrIpcActivexCtrl::LbPlay(SHORT channelSelected, SHORT playMode)
 	}
 	else {
 		strResult.AppendFormat("\"error\": \"%s\"",
-			"登陆失败");
+			"未登陆");
 		strResult.AppendFormat("\"isSuccess\": \"%s\"", "fail");
 	}
 	strResult.Append("}");
