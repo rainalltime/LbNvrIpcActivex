@@ -196,7 +196,7 @@ protected:
 	//开始对讲
 	afx_msg BSTR LbTalkStart();
 	//停止对讲
-	BSTR LbTalkStop();
+	afx_msg BSTR LbTalkStop();
 // 事件映射
 	DECLARE_EVENT_MAP()
 
