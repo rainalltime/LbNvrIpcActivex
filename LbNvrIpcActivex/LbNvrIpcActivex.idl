@@ -37,6 +37,7 @@ library LbNvrIpcActivexLib
 			[id(13)] BSTR LbTalkStart();
 			[id(14)] BSTR LbTalkStop();
 			[id(15)] BSTR LbSnapshot(IDispatch* aCallFun, ULONG Channel, ULONG Quality, ULONG ImageSize, ULONG mode, ULONG InterSnap, ULONG CmdSerial);
+			[id(16)] BSTR LbGetDeviceTime();
 	};
 	//  CLbNvrIpcActivexCtrl 的事件调度接口
 	[ 

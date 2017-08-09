@@ -38,6 +38,7 @@ BEGIN_DISPATCH_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbTalkStart", dispidLbTalkStart, LbTalkStart, VT_BSTR, VTS_NONE)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbTalkStop", dispidLbTalkStop, LbTalkStop, VT_BSTR, VTS_NONE)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbSnapshot", dispidLbSnapshot, LbSnapshot, VT_BSTR, VTS_DISPATCH VTS_UI4 VTS_UI4 VTS_UI4 VTS_UI4 VTS_UI4 VTS_UI4)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbGetDeviceTime", dispidLbGetDeviceTime, LbGetDeviceTime, VT_BSTR, VTS_NONE)
 END_DISPATCH_MAP()
 
 // 事件映射
@@ -536,11 +537,11 @@ void CALLBACK SnapRev(LLONG lLoginID, BYTE * pBuf, UINT RevLen, UINT EncodeType,
 		//}
 	const char EncodeTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	//返回值  
-	CString strEncode;
+	CString strEncode;//返回base64
 	unsigned char Tmp[4] = { 0 };
-	int LineLength = 0;
-	BYTE *Data = pBuf;
-	int DataByte = RevLen;
+	int LineLength = 0;//
+	BYTE *Data = pBuf;//原byte数据
+	int DataByte = RevLen;//数据长度
 	for (int i = 0; i<(int)(DataByte / 3); i++)
 	{
 		Tmp[1] = *Data++;
@@ -574,7 +575,6 @@ void CALLBACK SnapRev(LLONG lLoginID, BYTE * pBuf, UINT RevLen, UINT EncodeType,
 	varArg[0].vt = VT_BSTR;
 	varArg[0].bstrVal= strEncode.AllocSysString();
 	m_CALLSnapshot.InvokeN((DISPID)DISPID_VALUE, varArg, 1);
-	
 }
 
 
@@ -766,11 +766,28 @@ BSTR CLbNvrIpcActivexCtrl::LbSnapshot(IDispatch* aCallFun, ULONG Channel, ULONG 
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	CString strResult;
+	CString strResult="{";
 	m_CALLSnapshot = aCallFun;
 	// TODO: 在此添加调度处理程序代码
 	CLIENT_SetSnapRevCallBack(SnapRev,NULL);
 	SNAP_PARAMS stuSnapParams = { Channel ,Quality, ImageSize, mode, InterSnap, CmdSerial};
-	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_SnapPictureEx(g_lLoginHandle, &stuSnapParams) ? "success" : "fail");
+	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_SnapPictureEx(g_lLoginHandle, &stuSnapParams) ? "success}" : "fail}");
+	
+	return strResult.AllocSysString();
+}
+
+
+BSTR CLbNvrIpcActivexCtrl::LbGetDeviceTime()
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;
+
+	// TODO: 在此添加调度处理程序代码
+	LPNET_TIME tempTime;
+	if( CLIENT_QueryDeviceTime(g_lLoginHandle,tempTime))
+	strResult.AppendFormat("{\"DeviceTime\":\"%d-%d-%d %d:%d:%d\",\"isSuccess\":\"success\"}");
+	else
+		strResult.AppendFormat("{\"isSuccess\":\"fail\"}");
 	return strResult.AllocSysString();
 }

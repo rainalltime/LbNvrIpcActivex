@@ -204,12 +204,15 @@ protected:
 	afx_msg BSTR LbTalkStop();
 	//抓图 回调函数名
 	afx_msg BSTR LbSnapshot(IDispatch* aCallFun, ULONG Channel, ULONG Quality, ULONG ImageSize, ULONG mode, ULONG InterSnap, ULONG CmdSerial);
+	//查询当前设备时间	
+	afx_msg BSTR LbGetDeviceTime();
 // 事件映射
 	DECLARE_EVENT_MAP()
 
 // 调度和事件 ID
 public:
 	enum {
+		dispidLbGetDeviceTime = 16L,
 		dispidLbSnapshot = 15L,
 		dispidLbTalkStop = 14L,
 		dispidLbTalkStart = 13L,
@@ -284,4 +287,5 @@ public:
 	friend void CALLBACK SnapRev(LLONG lLoginID, BYTE *pBuf, UINT RevLen, UINT EncodeType, DWORD CmdSerial, LDWORD dwUser);
 
 protected:
+
 };
