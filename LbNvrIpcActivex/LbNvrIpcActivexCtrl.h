@@ -3,6 +3,15 @@
 #include "dhnetsdk.h"
 #include "avglobal.h"
 #include <MsHTML.h>  
+#include <ATLBASE.H>
+extern ATL::CComModule _Module;
+#include <ATLCOM.h>
+
+//回调函数--全局变量
+ATL::CComDispatchDriver m_CALLSnapshot;//注册js抓图回调函数
+
+
+//
 CString tempLog;
 // LbNvrIpcActivexCtrl.h : CLbNvrIpcActivexCtrl ActiveX 控件类的声明。
 
@@ -32,15 +41,11 @@ protected:
 	DECLARE_OLETYPELIB(CLbNvrIpcActivexCtrl)      // GetTypeInfo
 	DECLARE_PROPPAGEIDS(CLbNvrIpcActivexCtrl)     // 属性页 ID
 	DECLARE_OLECTLTYPE(CLbNvrIpcActivexCtrl)		// 类型名称和杂项状态
-
 // 消息映射
 	DECLARE_MESSAGE_MAP()
-
 // 调度映射
 	DECLARE_DISPATCH_MAP()
-
 	afx_msg void AboutBox();
-
 	//****************************************************************
 	//外部调用的函数
 
@@ -197,12 +202,15 @@ protected:
 	afx_msg BSTR LbTalkStart();
 	//停止对讲
 	afx_msg BSTR LbTalkStop();
+	//抓图 回调函数名
+	afx_msg BSTR LbSnapshot(IDispatch* aCallFun, ULONG Channel, ULONG Quality, ULONG ImageSize, ULONG mode, ULONG InterSnap, ULONG CmdSerial);
 // 事件映射
 	DECLARE_EVENT_MAP()
 
 // 调度和事件 ID
 public:
 	enum {
+		dispidLbSnapshot = 15L,
 		dispidLbTalkStop = 14L,
 		dispidLbTalkStart = 13L,
 		dispidLbSetVideoEffect = 12L,
@@ -233,6 +241,7 @@ public:
 	//}retIsSuccess= retUnknown;
 	//CString retJson;
 	CString lastClickTime="未点击";//最后一次单击的时间
+
 	BOOL g_bNetSDKInitFlag = FALSE;
 	LLONG g_lLoginHandle = 0L;
 	LLONG g_lRealHandle = 0;
@@ -271,4 +280,8 @@ public:
 		LDWORD dwUser);
 	//回调函数语音对讲
 	friend void _stdcall AudioDataCallBack(LONG lTalkHandle, char *pDataBuf, DWORD dwBufSize, BYTE byAudioFlag, DWORD dwUser);
+	//图片回调友元函数
+	friend void CALLBACK SnapRev(LLONG lLoginID, BYTE *pBuf, UINT RevLen, UINT EncodeType, DWORD CmdSerial, LDWORD dwUser);
+
+protected:
 };

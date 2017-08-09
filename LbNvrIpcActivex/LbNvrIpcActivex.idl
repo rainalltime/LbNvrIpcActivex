@@ -36,6 +36,7 @@ library LbNvrIpcActivexLib
 			[id(12)] BSTR LbSetVideoEffect(SHORT nBrightness, SHORT nContrast, SHORT nHue, SHORT nSaturation);
 			[id(13)] BSTR LbTalkStart();
 			[id(14)] BSTR LbTalkStop();
+			[id(15)] BSTR LbSnapshot(IDispatch* aCallFun, ULONG Channel, ULONG Quality, ULONG ImageSize, ULONG mode, ULONG InterSnap, ULONG CmdSerial);
 	};
 	//  CLbNvrIpcActivexCtrl 的事件调度接口
 	[ 

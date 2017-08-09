@@ -37,6 +37,7 @@ BEGIN_DISPATCH_MAP(CLbNvrIpcActivexCtrl, COleControl)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbSetVideoEffect", dispidLbSetVideoEffect, LbSetVideoEffect, VT_BSTR, VTS_I2 VTS_I2 VTS_I2 VTS_I2)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbTalkStart", dispidLbTalkStart, LbTalkStart, VT_BSTR, VTS_NONE)
 	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbTalkStop", dispidLbTalkStop, LbTalkStop, VT_BSTR, VTS_NONE)
+	DISP_FUNCTION_ID(CLbNvrIpcActivexCtrl, "LbSnapshot", dispidLbSnapshot, LbSnapshot, VT_BSTR, VTS_DISPATCH VTS_UI4 VTS_UI4 VTS_UI4 VTS_UI4 VTS_UI4 VTS_UI4)
 END_DISPATCH_MAP()
 
 // 事件映射
@@ -505,6 +506,79 @@ void CLbNvrIpcActivexCtrl::SetFullScreen(bool isFull)
 
 
 
+void CALLBACK SnapRev(LLONG lLoginID, BYTE * pBuf, UINT RevLen, UINT EncodeType, DWORD CmdSerial, LDWORD dwUser)
+{
+		//printf("[SnapRev] -- receive data!\n");
+		//if (lLoginID == g_lLoginHandle)
+		//{
+		//	if (NULL != pBuf && RevLen > 0)
+		//	{
+		//		char szPicturePath[256] = "";
+		//		time_t stuTime;
+		//		time(&stuTime);
+		//		char szTmpTime[128] = "";
+		//		strftime(szTmpTime, sizeof(szTmpTime) - 1, "%y%m%d_%H%M%S",
+		//			gmtime(&stuTime));
+		//		_snprintf(szPicturePath, sizeof(szPicturePath) - 1, "%d_%s.jpg",
+		//			CmdSerial, szTmpTime);
+		//		FILE* pFile = fopen(szPicturePath, "wb");
+		//		if (NULL == pFile)
+		//		{
+		//			return;
+		//		}
+		//		int nWrite = 0;
+		//		while (nWrite != RevLen)
+		//		{
+		//			nWrite += fwrite(pBuf + nWrite, 1, RevLen - nWrite, pFile);
+		//		}
+		//		fclose(pFile);
+		//	}
+		//}
+	const char EncodeTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	//返回值  
+	CString strEncode;
+	unsigned char Tmp[4] = { 0 };
+	int LineLength = 0;
+	BYTE *Data = pBuf;
+	int DataByte = RevLen;
+	for (int i = 0; i<(int)(DataByte / 3); i++)
+	{
+		Tmp[1] = *Data++;
+		Tmp[2] = *Data++;
+		Tmp[3] = *Data++;
+		strEncode += EncodeTable[Tmp[1] >> 2];
+		strEncode += EncodeTable[((Tmp[1] << 4) | (Tmp[2] >> 4)) & 0x3F];
+		strEncode += EncodeTable[((Tmp[2] << 2) | (Tmp[3] >> 6)) & 0x3F];
+		strEncode += EncodeTable[Tmp[3] & 0x3F];
+		if (LineLength += 4, LineLength == 76) { strEncode += "\r\n"; LineLength = 0; }
+	}
+	//对剩余数据进行编码  
+	int Mod = DataByte % 3;
+	if (Mod == 1)
+	{
+		Tmp[1] = *Data++;
+		strEncode += EncodeTable[(Tmp[1] & 0xFC) >> 2];
+		strEncode += EncodeTable[((Tmp[1] & 0x03) << 4)];
+		strEncode += "==";
+	}
+	else if (Mod == 2)
+	{
+		Tmp[1] = *Data++;
+		Tmp[2] = *Data++;
+		strEncode += EncodeTable[(Tmp[1] & 0xFC) >> 2];
+		strEncode += EncodeTable[((Tmp[1] & 0x03) << 4) | ((Tmp[2] & 0xF0) >> 4)];
+		strEncode += EncodeTable[((Tmp[2] & 0x0F) << 2)];
+		strEncode += "=";
+	}
+	VARIANT varArg[1];
+	varArg[0].vt = VT_BSTR;
+	varArg[0].bstrVal= strEncode.AllocSysString();
+	m_CALLSnapshot.InvokeN((DISPID)DISPID_VALUE, varArg, 1);
+	
+}
+
+
+
 
 BSTR CLbNvrIpcActivexCtrl::LbStopPlay()
 {
@@ -684,5 +758,19 @@ BSTR CLbNvrIpcActivexCtrl::LbTalkStop()
 	// 停止语音对讲
 	strResult.AppendFormat("\"isSuccess\": \"%s\"", (CLIENT_RecordStop()&&CLIENT_StopTalkEx(g_lTalkHandle)) ? "success"  : "fail");
 	strResult.Append("}");
+	return strResult.AllocSysString();
+}
+
+
+BSTR CLbNvrIpcActivexCtrl::LbSnapshot(IDispatch* aCallFun, ULONG Channel, ULONG Quality, ULONG ImageSize, ULONG mode, ULONG InterSnap, ULONG CmdSerial)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	CString strResult;
+	m_CALLSnapshot = aCallFun;
+	// TODO: 在此添加调度处理程序代码
+	CLIENT_SetSnapRevCallBack(SnapRev,NULL);
+	SNAP_PARAMS stuSnapParams = { Channel ,Quality, ImageSize, mode, InterSnap, CmdSerial};
+	strResult.AppendFormat("\"isSuccess\": \"%s\"", CLIENT_SnapPictureEx(g_lLoginHandle, &stuSnapParams) ? "success" : "fail");
 	return strResult.AllocSysString();
 }
